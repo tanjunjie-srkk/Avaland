@@ -1,0 +1,340 @@
+{
+  "mode": "per_image",
+  "results": [
+    {
+      "page_number": 1,
+      "file": "Memo1_page-0001.jpg",
+      "model_output": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sections": [
+              {
+                "type": "title",
+                "content": "Memo 1 (Sales Package)",
+                "confidence": 0.99
+              },
+              {
+                "type": "paragraph",
+                "content": "Date            : 6/11/2025\nProject         : Aetas Seputeh\nReference Number: AVALUX-AD-MEMO-SM-2025-009\nSubject         : Pricing & Sales Packages, REA Comm & Referral Scheme (15 Jun 2025 to 31 Dec 2025)",
+                "confidence": 0.97
+              },
+              {
+                "type": "header",
+                "content": "1.0 OBJECTIVE",
+                "confidence": 0.98
+              },
+              {
+                "type": "paragraph",
+                "content": "With reference to the above, we would like to seek Management's consideration and approval for the following proposed initiatives, aimed at stimulating demand in lower floors and Block B, enhancing the overall sales performance of Aetas Seputeh:",
+                "confidence": 0.96
+              },
+              {
+                "type": "bullet",
+                "content": "1. Price Adjustments",
+                "confidence": 0.99
+              },
+              {
+                "type": "bullet",
+                "content": "2. Proposed Sales Packages",
+                "confidence": 0.99
+              },
+              {
+                "type": "bullet",
+                "content": "3. REA Sales Commission",
+                "confidence": 0.99
+              },
+              {
+                "type": "bullet",
+                "content": "4. Referral Scheme",
+                "confidence": 0.99
+              },
+              {
+                "type": "header",
+                "content": "2.0 BACKGROUND",
+                "confidence": 0.98
+              },
+              {
+                "type": "paragraph",
+                "content": "Based on sales status as at 5/5/2025, there are 40 units with SPA signed & 8 units booked out of 126 units at Aetas Seputeh. Sales take up is slow at Block B & across low floors at both blocks.",
+                "confidence": 0.96
+              },
+              {
+                "type": "header",
+                "content": "3.0 PROPOSALS",
+                "confidence": 0.98
+              },
+              {
+                "type": "header",
+                "content": "3.1 LIST PRICE ADJUSTMENTS",
+                "confidence": 0.98
+              },
+              {
+                "type": "paragraph",
+                "content": "To accelerate sales, we propose an overall price adjustment as follows:",
+                "confidence": 0.97
+              },
+              {
+                "type": "header",
+                "content": "a) STANDARD SPA PRICE",
+                "confidence": 0.98
+              },
+              {
+                "type": "table",
+                "content": "ITEM | DESCRIPTION\n1. SPA Price adjustments by Block, Unit Type, and Floor Level (Low / Mid / High) | A1: 5%\n| A2: 3%\n| B1: N/A",
+                "confidence": 0.88
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "language_detected": [
+            "en"
+          ],
+          "quality": "clear"
+        }
+      }
+    },
+    {
+      "page_number": 2,
+      "file": "Memo1_page-0002.jpg",
+      "model_output": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sections": [
+              {
+                "type": "table",
+                "content": "2. Recalibrate floor premiums\n• RM3,000 per floor\n• at level 20: RM50k jump\n• at level 30: RM30k jump (as premium units at Tower A are mostly sold)\n\n3. Introduce car park premiums\nUsing 1 Single + 1 Tandem as the base, add on following premium for additional CP\n• Tandem 50,000\n• Single Bay 50,000\n\nOVERALL INCREASE IN SPA PRICE        RM14,759,000",
+                "confidence": 0.74
+              },
+              {
+                "type": "header",
+                "content": "b) CURRENT SPA PRICE VS REVISED NEW SPA PRICE",
+                "confidence": 0.92
+              },
+              {
+                "type": "paragraph",
+                "content": "Summary of new SPA price as follows:",
+                "confidence": 0.9
+              },
+              {
+                "type": "table",
+                "content": "TYPE | BUA (sf) | AVAILABLE UNITS | CURRENT SPA PRICE Min | CURRENT SPA PRICE Max | Min psf | Max psf | NEW SPA PRICE Min | NEW SPA PRICE Max | Min psf | Max psf\nA1 | 4,085 | 15 | 3,953,800 | 4,089,800 | 967 | 1,001 | 4,254,800 | 4,477,800 | 1,041 | 1,096\nA2 | 3,531 | 23 | 3,479,800 | 3,618,800 | 985 | 1,025 | 3,690,800 | 3,892,800 | 1,045 | 1,102\nB1 | 3,531 | 21 | 3,303,800 | 3,421,800 | 936 | 969 | 3,480,800 | 3,717,800 | 986 | 1,053\nB2 | 3,832 | 1 | 3,717,800 | 3,717,800 | 970 | 970 | 3,817,800 | 3,817,800 | 996 | 996\nGB1 | 3,832 | 1 | 3,717,800 | 3,717,800 | 970 | 970 | 3,817,800 | 3,817,800 | 996 | 996\nGB2 | 3,832 | 1 | 3,630,800 | 3,630,800 | 947 | 947 | 3,817,800 | 3,817,800 | 996 | 996\nC | 7,138 | 1 | 6,888,800 | 6,888,800 | 965 | 965 | 7,538,800 | 7,538,800 | 1,056 | 1,056\n78 available | 86\n* Booked",
+                "confidence": 0.6
+              },
+              {
+                "type": "footnote",
+                "content": "* Current SPA price is at the max of 90% EF, this price increase will potentially reduce the loan margin\n* Revised SPA price is within the KPKT pricing",
+                "confidence": 0.8
+              },
+              {
+                "type": "header",
+                "content": "c) FOREIGN SPA PRICE (partially furnished packages & 7% agent commission)",
+                "confidence": 0.93
+              },
+              {
+                "type": "bullet",
+                "content": "• Only applicable for Block B standard units (excluding GB1 & GB2)",
+                "confidence": 0.92
+              },
+              {
+                "type": "paragraph",
+                "content": "To facilitate the 7% commission to agents and partially furnished packages for foreign markets, we will be factoring the costs into the selling price, ensuring margin protection while supporting expansion into high-potential markets such as Singapore, China, Hong Kong, and Taiwan.",
+                "confidence": 0.88
+              },
+              {
+                "type": "paragraph",
+                "content": "Using the standard increased SPA price, we will do a further mark up on each of the unit as and when it is sold to derive its new List Price.",
+                "confidence": 0.9
+              },
+              {
+                "type": "bullet",
+                "content": "1. 4% to cover agents commission of 7%\n2. RM220k to cover partially furnished packages of RM200k",
+                "confidence": 0.85
+              },
+              {
+                "type": "paragraph",
+                "content": "With this mark up, there will be an average of RM62k surplus per unit if we sell to foreigners as compared to our standard packages.",
+                "confidence": 0.9
+              },
+              {
+                "type": "paragraph",
+                "content": "As some of the new List Price will exceed KPKT approval, we will use the Net Price after Discount as SPA Price. (Discount % is the same as the standard unit Rebate %, as per table below)",
+                "confidence": 0.88
+              },
+              {
+                "type": "table",
+                "content": "Units        45\nBUA          155,565\n\nREVISED SPA PRICE | REVISED NET PRICE | NET PRICE AFTER AGENT | FOREIGN LIST PRICE | FOREIGN NET PRICE (USED AS SPA PRICE) | FOREIGN NET AFTER AGENT",
+                "confidence": 0.55
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "language_detected": [
+            "en"
+          ],
+          "quality": "low_resolution"
+        }
+      }
+    },
+    {
+      "page_number": 3,
+      "file": "Memo1_page-0003.jpg",
+      "model_output": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sections": [
+              {
+                "type": "table",
+                "content": "[PARTIAL]\n45 Units Total | 159,351,000 | 147,024,186 | 165,977,727 | 175,866,000 | 162,089,580 | 147,377,037\nAverage per unit | 3,541,133 | 3,267,204 | 3,701,727 | 3,908,133 | 3,602,213 | 3,274,934\nAverage psf | 1,006 | 929 | 1,053 | 1,104 | 1,020 | 929\nhigher sales mix purchase\n10%\nNet Surplus/(Loss) Sales\nTotal 45 units\nAve per Unit\n6,207",
+                "confidence": 0.48
+              },
+              {
+                "type": "paragraph",
+                "content": "Please refer to the detailed individual unit Revised SPA Price List including a set of Foreigner List Price List as attached. The Price List will be circulated for management signatory via email.",
+                "confidence": 0.92
+              },
+              {
+                "type": "header",
+                "content": "3.2 PROPOSED SALES PACKAGES",
+                "confidence": 0.96
+              },
+              {
+                "type": "table",
+                "content": "[PARTIAL]\nSales Package | Approved | Proposed\nBooking date | Up to 14 Jun 2025 | Booking date | 15 Jun 2025 – 31 Dec 2025\nBumi Rebate | 5% | Bumi Rebate | 5%\n# applicable | # applicable\nStandard Rebate* | 5% | Standard Rebate* | Type A1 | 9%\nType A2 | 6%\nSpecial Rebate* | Type B Low Floors (Level 11-19) | 5% | Type B01 & B02 | 7%\nType B Low Floors (Level 11-19) | 10%\nType B Mid Floors (Level 20-29) | 7%\nType B High Floors (Level 30 & above) | 6%\nAdditional Rebate* | 1% for Loan Purchase | Additional Rebate* | Budget 3.4% per unit is ES\n1%–2% for Marketing Events\nBalance is Subject to Management’s Discretion\nRM200K Partially Furnished Package | Type A Low Floors (Level 10-13A) | RM200K Partially Furnished Package | B standard units (including CB & GEB)\n*applicable only for units with 4% + RM200K mark up for foreigners\nOthers | Free Legal Fees & Disbursements for SPA only (including an application for Foreigner Consent, if applicable)\nThe cost of converting the SPA purchasers located overseas will be borne by the developer (if any)\nPre-Processing Fees for Credit Card Payment (up to 10% of SPA price). Balance payment via Credit Card is permitted subject to 2% Credit Card Handling Charges\nAll Rebates are Calculated on Net Price after Bumi Rebate\nFor B standard units (excluding CB & GEB) which List Price will factor in 4% + RM200K mark up for foreigners, all Rebate will be given via Discount so that SPA Price will not exceed RPKT Price.",
+                "confidence": 0.45
+              },
+              {
+                "type": "header",
+                "content": "3.3 REA SALES COMMISSION",
+                "confidence": 0.96
+              },
+              {
+                "type": "paragraph",
+                "content": "To incentivise take-up for Block B – particularly lower floor units – we propose revising the current standard REA commission structure from a flat 3% to a tiered range between 2% to 6%, based on unit type, block, and floor level.",
+                "confidence": 0.9
+              },
+              {
+                "type": "header",
+                "content": "Proposed Agent Commission Scheme (15 Jun 2025 – 31 Dec 2025)",
+                "confidence": 0.88
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "language_detected": [
+            "en"
+          ],
+          "quality": "low_resolution"
+        }
+      }
+    },
+    {
+      "page_number": 4,
+      "file": "Memo1_page-0004.jpg",
+      "model_output": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sections": [
+              {
+                "type": "table",
+                "content": "CURRENT REA SCHEME        PROPOSED REA SCHEME\n\nBUYER        UNITS COMM%        UNITS        COMM%\n\nLocal Buyers        Flat        3%        Block A all Levels        2%\n\nSpecial Units\nBlock B Level 10 (Garden Units)\nPenthouses        3%\n\nBlock B Level 30 - 38 (High floors)        4%\nBlock B Level 20 - 29 (Mid floors)        5%\nBlock B Level 11 - 19 (Low floors)        6%\n\nForeign Buyers        Flat        7%        For Block B units with price increase\n+4% agent comm + RM220k for partially\nfurnished package\nnet price 10% higher than local package        7%",
+                "confidence": 0.74
+              },
+              {
+                "type": "note",
+                "content": "Note:\n\n1. 7% Agent Commission for foreign buyer is calculated on net price after discount, and after deducting RM200k for Partially Furnished Package\n\n2. Agent commission payout to remain at 30% upon SPA & balance 70% upon our receipt of Stage 2A",
+                "confidence": 0.8
+              },
+              {
+                "type": "header",
+                "content": "3.4 REFERRAL SCHEME",
+                "confidence": 0.88
+              },
+              {
+                "type": "paragraph",
+                "content": "RM30,000 per successful referral sales for the following categories of introducer:",
+                "confidence": 0.86
+              },
+              {
+                "type": "table",
+                "content": "PROPOSED REFERRAL SCHEME (15 JUN 2025 - 31 DEC 2025)\n\nCategory        Current Scheme        Proposed Scheme        Remarks\n\nGuests at Marketing Events        NA        30,000        * Non-buyer category\n* Guests must register during our marketing event for record of event attendance.\n* Cannot refer own family\n* Booking within 2 months from event.\n* SPA signing within 21 days\n* Payout upon stage 2A\n* For agent sales, RM30k will be deducted from Commission\n* For internal sales, to monitor to prevent abuse\n\nBusiness Associates        10,000        30,000        Verification by Procurement / staff working with Business Associates\n\nStaff        15,000        30,000\n\nBGB (Buyer-Get-Buyer)        2%        2%        Company policy (DOE Allocation for 5 units)",
+                "confidence": 0.72
+              },
+              {
+                "type": "header",
+                "content": "4.0 FINANCIAL IMPACT",
+                "confidence": 0.9
+              },
+              {
+                "type": "paragraph",
+                "content": "With the proposals above, there will be an increase in NDV of RM3,556,817 while we maintain the DOE. Summary of Executive Summary as attached.",
+                "confidence": 0.85
+              },
+              {
+                "type": "table",
+                "content": "[PARTIAL]",
+                "confidence": 0.3
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "language_detected": [
+            "en"
+          ],
+          "quality": "low_resolution"
+        }
+      }
+    },
+    {
+      "page_number": 5,
+      "file": "Memo1_page-0005.jpg",
+      "model_output": {
+        "pages": [
+          {
+            "page_number": 1,
+            "sections": [
+              {
+                "type": "table",
+                "content": "[UNREADABLE]",
+                "confidence": 0.2
+              },
+              {
+                "type": "note",
+                "content": "The Executive Summary will be circulated for management signatory via email.",
+                "confidence": 0.95
+              },
+              {
+                "type": "header",
+                "content": "5.0 RECOMMENDATION",
+                "confidence": 0.95
+              },
+              {
+                "type": "paragraph",
+                "content": "We trust the above proposals will strengthen the overall sales strategy and accelerate uptake for Aetas Seputeh with an increase in NDV for the project. We would like to seek Management’s Management’s approval to implement these initiatives in order to achieve the sales target for FY2025.",
+                "confidence": 0.9
+              },
+              {
+                "type": "paragraph",
+                "content": "Thank you.",
+                "confidence": 0.95
+              }
+            ]
+          }
+        ],
+        "metadata": {
+          "language_detected": [
+            "en"
+          ],
+          "quality": "low_resolution"
+        }
+      }
+    }
+  ]
+}

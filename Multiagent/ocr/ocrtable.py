@@ -96,7 +96,7 @@ def ocr_images_with_chat_model(image_paths: list[Path], user_prompt: str) -> str
       "type": "text",
       "text": (
         f"{user_prompt}\n\n"
-        '''Analyze this page image.
+        '''Analyze this page image. Analyze ONLY tables. You must analyze all the tables in this images
 
             Return JSON with:
             {
@@ -160,7 +160,8 @@ def main() -> None:
   )
   args = parser.parse_args()
 
-  memo_dir = Path(__file__).resolve().parents[1] / "memo"
+  #memo_dir = Path(__file__).resolve().parents[1] / "memo"
+  memo_dir = Path(r"C:\Users\TanJunJie\OneDrive - SRKK Group\Project\Avaland\memo")
   image_paths = sorted(
     [p for p in memo_dir.iterdir() if p.is_file() and p.suffix.lower() in {".jpg", ".jpeg", ".png"}]
   )
@@ -170,7 +171,7 @@ def main() -> None:
   user_prompt = (
    '''You are a TABLE-ONLY OCR and DOCUMENT STRUCTURE engine.
 
-Your role is STRICTLY LIMITED to table extraction.
+Your role is STRICTLY LIMITED to tables extraction.
 You are NOT a reasoning, calculation, or rule interpretation system.
 
 CORE TASKS:
@@ -234,7 +235,7 @@ FAIL-SAFE:
       )
     output_obj = {"mode": "per_image", "results": outputs}
 
-  with open("Multiagent/artifact/output-table.json", "w", encoding="utf-8") as f:
+  with open("../artifact/output-table.json", "w", encoding="utf-8") as f:
     json.dump(output_obj, f, ensure_ascii=False, indent=2)
 
   #print(json.dumps({"results": outputs}, ensure_ascii=False, indent=2))

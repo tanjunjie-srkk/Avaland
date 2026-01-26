@@ -1,0 +1,151 @@
+{
+  "memo_reference": "MOCK-MEMO-TEST-001",
+  "effective_period": {
+    "start_date": "01 Jan 2026",
+    "end_date": "31 Dec 2026"
+  },
+  "project_name": "Mock Project Alpha",
+  "rules": {
+    "commission_rules": [
+      {
+        "rule_id": "COM_MOCK_001",
+        "rule_name": "Mock Local Buyer – Block A",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'A'",
+            "commission_percentage": 2.5,
+            "description": "Mock commission for Block A"
+          }
+        ],
+        "notes": [
+          "Mock note for testing"
+        ]
+      },
+      {
+        "rule_id": "COM_MOCK_002",
+        "rule_name": "Mock Local Buyer – Block B Tiered",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'B' AND floor_level >= 1 AND floor_level <= 10",
+            "commission_percentage": 6.0,
+            "description": "Low floors"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 11 AND floor_level <= 20",
+            "commission_percentage": 5.0,
+            "description": "Mid floors"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 21",
+            "commission_percentage": 4.0,
+            "description": "High floors"
+          }
+        ],
+        "notes": []
+      },
+      {
+        "rule_id": "COM_MOCK_003",
+        "rule_name": "Mock Foreign Buyer",
+        "buyer_type": "foreign",
+        "conditions": [
+          {
+            "condition": "IF buyer_type == 'foreign'",
+            "commission_percentage": 7.0,
+            "description": "Foreign buyer flat rate"
+          }
+        ],
+        "notes": [
+          "Commission calculated after mock package deduction"
+        ]
+      }
+    ],
+    "rebate_rules": [
+      {
+        "rule_id": "REB_MOCK_001",
+        "rule_name": "Mock Bumi Rebate",
+        "rebate_type": "bumi",
+        "conditions": [
+          {
+            "condition": "IF buyer_is_bumi == True",
+            "rebate_percentage": 5.0,
+            "description": "Mock bumi rebate"
+          }
+        ],
+        "calculation_base": "Net Price",
+        "notes": []
+      },
+      {
+        "rule_id": "REB_MOCK_002",
+        "rule_name": "Mock Unit Type Rebate",
+        "rebate_type": "standard",
+        "conditions": [
+          {
+            "condition": "IF unit_type == 'X1'",
+            "rebate_percentage": 8.0,
+            "description": "Mock unit X1"
+          },
+          {
+            "condition": "IF unit_type == 'X2'",
+            "rebate_percentage": 6.0,
+            "description": "Mock unit X2"
+          }
+        ],
+        "calculation_base": "Net Price after Bumi Rebate",
+        "notes": []
+      }
+    ],
+    "referral_rules": [
+      {
+        "rule_id": "REF_MOCK_001",
+        "rule_name": "Mock Guest Referral",
+        "referrer_category": "guest",
+        "reward_amount": 20000,
+        "reward_type": "fixed",
+        "conditions": [
+          "Mock registration condition",
+          "Mock booking window"
+        ],
+        "payout_timing": "Upon Completion"
+      }
+    ],
+    "price_adjustment_rules": [
+      {
+        "rule_id": "PRC_MOCK_001",
+        "rule_name": "Mock Floor Premium",
+        "adjustment_type": "floor_premium",
+        "conditions": [
+          {
+            "condition": "IF floor_level increments by 1",
+            "adjustment_amount": 2000,
+            "description": "RM2,000 per floor"
+          }
+        ]
+      }
+    ],
+    "package_rules": [
+      {
+        "rule_id": "PKG_MOCK_001",
+        "rule_name": "Mock Furnishing Package",
+        "package_type": "mock_package",
+        "eligibility": [
+          "All buyers"
+        ],
+        "value": "RM100,000",
+        "notes": [
+          "Mock package for POC"
+        ]
+      }
+    ]
+  },
+  "pseudo_code": {
+    "calculate_commission": "function calculate_commission(context): return mock_value",
+    "calculate_rebate": "function calculate_rebate(context): return mock_value",
+    "calculate_final_price": "function calculate_final_price(context): return mock_value"
+  },
+  "extraction_confidence": 1.0,
+  "warnings": [
+    "This is mocked data for POC only"
+  ]
+}

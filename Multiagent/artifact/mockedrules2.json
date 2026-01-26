@@ -1,0 +1,162 @@
+{
+  "memo_reference": "MOCK-MEMO-TEST-002",
+  "effective_period": {
+    "start_date": "01 Jul 2026",
+    "end_date": "30 Jun 2027"
+  },
+  "project_name": "Mock Project Beta",
+  "rules": {
+    "commission_rules": [
+      {
+        "rule_id": "COM_MOCK_101",
+        "rule_name": "Mock Local Buyer Commission – Block C",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'C'",
+            "commission_percentage": 3.0,
+            "description": "Flat commission for Block C"
+          }
+        ],
+        "notes": [
+          "Used to test new block logic"
+        ]
+      },
+      {
+        "rule_id": "COM_MOCK_102",
+        "rule_name": "Mock Local Buyer Commission – Block D by Floor",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'D' AND floor_level >= 1 AND floor_level <= 5",
+            "commission_percentage": 6.5,
+            "description": "Low floors Block D"
+          },
+          {
+            "condition": "IF block == 'D' AND floor_level >= 6 AND floor_level <= 15",
+            "commission_percentage": 5.5,
+            "description": "Mid floors Block D"
+          },
+          {
+            "condition": "IF block == 'D' AND floor_level >= 16",
+            "commission_percentage": 4.5,
+            "description": "High floors Block D"
+          }
+        ],
+        "notes": []
+      },
+      {
+        "rule_id": "COM_MOCK_103",
+        "rule_name": "Mock Foreign Buyer Commission – All Blocks",
+        "buyer_type": "foreign",
+        "conditions": [
+          {
+            "condition": "IF buyer_type == 'foreign'",
+            "commission_percentage": 6.5,
+            "description": "Reduced foreign commission for testing"
+          }
+        ],
+        "notes": [
+          "Flat mock rate across all blocks"
+        ]
+      }
+    ],
+    "rebate_rules": [
+      {
+        "rule_id": "REB_MOCK_101",
+        "rule_name": "Mock Early Bird Rebate",
+        "rebate_type": "early_bird",
+        "conditions": [
+          {
+            "condition": "IF early_bird == True",
+            "rebate_percentage": 3.0,
+            "description": "Early booking incentive"
+          }
+        ],
+        "calculation_base": "Net Price",
+        "notes": [
+          "Time-based rebate simulation"
+        ]
+      },
+      {
+        "rule_id": "REB_MOCK_102",
+        "rule_name": "Mock Unit Category Rebate",
+        "rebate_type": "standard",
+        "conditions": [
+          {
+            "condition": "IF unit_type == 'Y1'",
+            "rebate_percentage": 7.0,
+            "description": "Category Y1"
+          },
+          {
+            "condition": "IF unit_type == 'Y2'",
+            "rebate_percentage": 5.0,
+            "description": "Category Y2"
+          }
+        ],
+        "calculation_base": "Net Price after Early Bird",
+        "notes": []
+      }
+    ],
+    "referral_rules": [
+      {
+        "rule_id": "REF_MOCK_101",
+        "rule_name": "Mock Staff Referral",
+        "referrer_category": "staff",
+        "reward_amount": 15000,
+        "reward_type": "fixed",
+        "conditions": [],
+        "payout_timing": "Upon Key Collection"
+      },
+      {
+        "rule_id": "REF_MOCK_102",
+        "rule_name": "Mock Buyer-Get-Buyer",
+        "referrer_category": "bgb",
+        "reward_amount": 1.5,
+        "reward_type": "percentage",
+        "conditions": [
+          "Maximum 3 referrals"
+        ],
+        "payout_timing": "After Full Payment"
+      }
+    ],
+    "price_adjustment_rules": [
+      {
+        "rule_id": "PRC_MOCK_101",
+        "rule_name": "Mock View Premium",
+        "adjustment_type": "view_premium",
+        "conditions": [
+          {
+            "condition": "IF has_view == True",
+            "adjustment_amount": 40000,
+            "description": "Premium for view-facing units"
+          }
+        ]
+      }
+    ],
+    "package_rules": [
+      {
+        "rule_id": "PKG_MOCK_101",
+        "rule_name": "Mock Smart Home Package",
+        "package_type": "smart_home",
+        "eligibility": [
+          "Local buyers",
+          "Selected units only"
+        ],
+        "value": "RM80,000",
+        "notes": [
+          "Mock smart features bundle"
+        ]
+      }
+    ]
+  },
+  "pseudo_code": {
+    "calculate_commission": "function calculate_commission(context): return mock_commission",
+    "calculate_rebate": "function calculate_rebate(context): return mock_rebate",
+    "calculate_final_price": "function calculate_final_price(context): return mock_final_price"
+  },
+  "extraction_confidence": 1.0,
+  "warnings": [
+    "Mock dataset version 2 – for scenario testing only"
+  ]
+}

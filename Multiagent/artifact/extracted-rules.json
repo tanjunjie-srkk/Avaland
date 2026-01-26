@@ -53,7 +53,7 @@
         "buyer_type": "local",
         "conditions": [
           {
-            "condition": "IF is_garden_unit == True OR is_penthouse == True",
+            "condition": "IF is_ _unit == True OR is_penthouse == True",
             "commission_percentage": 3.0,
             "description": "Block B Level 10 Garden Units and all Penthouses"
           }

@@ -46,7 +46,7 @@ def test_memo_loading():
     return manager
 
 
-def test_date_filtering(manager: MemoManager):
+def test_date_filtering(manager: xMemoManager):
     """Test date-based filtering of memos."""
     print("\n" + "=" * 60)
     print("TEST 2: DATE FILTERING")
@@ -73,7 +73,7 @@ def test_date_filtering(manager: MemoManager):
         print(f"  - {ref}: {memo.metadata.effective_period}")
 
 
-def test_project_filtering(manager: MemoManager):
+def test_project_filtering(manager: xMemoManager):
     """Test project-based filtering of memos."""
     print("\n" + "=" * 60)
     print("TEST 3: PROJECT FILTERING")
@@ -99,7 +99,7 @@ def test_project_filtering(manager: MemoManager):
     print(f"✅ Found {len(fuzzy_filtered)} memos")
 
 
-def test_rule_aggregation(manager: MemoManager):
+def test_rule_aggregation(manager: xMemoManager):
     """Test rule aggregation with conflict detection."""
     print("\n" + "=" * 60)
     print("TEST 4: RULE AGGREGATION & CONFLICT DETECTION")

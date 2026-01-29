@@ -5,6 +5,9 @@
     "end_date": "30 Jun 2027"
   },
   "project_name": "Mock Project Beta",
+  "memo_type": "standard",
+  "supersedes": null,
+  "priority": 5,
   "rules": {
     "commission_rules": [
       {

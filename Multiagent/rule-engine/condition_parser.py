@@ -155,7 +155,7 @@ class ConditionParser:
         expr = expr.strip()
         
         # Check for negation
-        if expr.startswith('NOT ') or expr.startswith('not '):
+        if expr.startswith('NOT ') or expr.startswith('not ') or expr.startswith('Not '):
             var_name = expr[4:].strip()
             return lambda ctx: not ctx.get(var_name, False)
         

@@ -5,6 +5,9 @@
     "end_date": "31 Dec 2026"
   },
   "project_name": "Mock Project Alpha",
+  "memo_type": "standard",
+  "supersedes": null,
+  "priority": 5,
   "rules": {
     "commission_rules": [
       {

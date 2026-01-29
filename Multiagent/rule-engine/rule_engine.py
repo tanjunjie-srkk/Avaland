@@ -23,6 +23,10 @@ class CalculationResult:
     value_type: str  # 'percentage' or 'fixed'
     calculated_amount: Optional[float] = None
     details: Dict[str, Any] = field(default_factory=dict)
+    # Memo tracking for transparency
+    memo_reference: Optional[str] = None
+    memo_file: Optional[str] = None
+    effective_period: Optional[Dict[str, str]] = None
 
 
 @dataclass
@@ -37,6 +41,11 @@ class PricingResult:
     price_adjustments: List[CalculationResult] = field(default_factory=list)
     applicable_packages: List[str] = field(default_factory=list)
     matched_rules: List[str] = field(default_factory=list)
+    # Memo context for transparency
+    memo_reference: Optional[str] = None
+    memo_file: Optional[str] = None
+    effective_period: Optional[Dict[str, str]] = None
+    spa_date: Optional[str] = None
 
 
 class RuleEngine:
@@ -56,11 +65,15 @@ class RuleEngine:
         result = engine.calculate(context)
     """
     
-    def __init__(self, rules_path: str):
+    def __init__(self, rules_path: str, memo_file: Optional[str] = None):
         self.loader = RuleLoader(rules_path)
         self.library = self.loader.load()
         self.matcher = RuleMatcher(self.library)
         self.metadata = self.loader.get_metadata()
+        # Store memo context for transparency
+        self.memo_file = memo_file or Path(rules_path).name
+        self.memo_reference = self.metadata.get('memo_reference', 'Unknown')
+        self.effective_period = self.metadata.get('effective_period', {})
     
     def get_applicable_rules(
         self, 
@@ -166,7 +179,12 @@ class RuleEngine:
             commission_breakdown=commission_breakdown,
             price_adjustments=price_adjustments,
             applicable_packages=applicable_packages,
-            matched_rules=matched_rules
+            matched_rules=matched_rules,
+            # Add memo context for transparency
+            memo_reference=self.memo_reference,
+            memo_file=self.memo_file,
+            effective_period=self.effective_period,
+            spa_date=context.get('spa_date')  # Will be string if provided
         )
     
     def _calculate_rebate(
@@ -202,7 +220,11 @@ class RuleEngine:
             details={
                 'calculation_base': calc_base,
                 'effective_price': effective_price
-            }
+            },
+            # Add memo tracking
+            memo_reference=self.memo_reference,
+            memo_file=self.memo_file,
+            effective_period=self.effective_period
         )
     
     def _calculate_commission(
@@ -239,7 +261,11 @@ class RuleEngine:
                 'commission_base': commission_base,
                 'payout_spa': payout_spa,
                 'payout_stage2a': payout_stage2a
-            }
+            },
+            # Add memo tracking
+            memo_reference=self.memo_reference,
+            memo_file=self.memo_file,
+            effective_period=self.effective_period
         )
     
     def _calculate_price_adjustment(
@@ -259,7 +285,11 @@ class RuleEngine:
             value=amount,
             value_type='fixed',
             calculated_amount=amount,
-            details={}
+            details={},
+            # Add memo tracking
+            memo_reference=self.memo_reference,
+            memo_file=self.memo_file,
+            effective_period=self.effective_period
         )
     
     def explain_rules(self, context: Dict[str, Any]) -> str:

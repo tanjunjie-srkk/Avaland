@@ -5,6 +5,9 @@
     "end_date": "31 Dec 2025"
   },
   "project_name": "Aetas Seputeh",
+  "memo_type": "standard",
+  "supersedes": null,
+  "priority": 5,
   "rules": {
     "commission_rules": [
       {

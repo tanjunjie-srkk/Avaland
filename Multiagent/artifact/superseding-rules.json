@@ -1,0 +1,256 @@
+{
+  "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+  "effective_period": {
+    "start_date": "01 Jan 2026",
+    "end_date": "30 Jun 2026"
+  },
+  "project_name": "Aetas Seputeh",
+  "memo_type": "superseding",
+  "supersedes": "AVALUX-AD-MEMO-SM-2025-009",
+  "priority": 7,
+  "rules": {
+    "commission_rules": [
+      {
+        "rule_id": "COM_001",
+        "rule_name": "Local Buyer Commission – Block A (Updated)",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'A'",
+            "commission_percentage": 2.5,
+            "description": "Updated: Increased commission for Block A"
+          }
+        ],
+        "notes": [
+          "Increased from 2% to 2.5% effective Jan 2026"
+        ]
+      },
+      {
+        "rule_id": "COM_002",
+        "rule_name": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'B' AND floor_level >= 11 AND floor_level <= 19",
+            "commission_percentage": 5.5,
+            "description": "Low floors Block B (Level 11–19) - Updated"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 20 AND floor_level <= 29",
+            "commission_percentage": 4.5,
+            "description": "Mid floors Block B (Level 20–29) - Updated"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 30 AND floor_level <= 38",
+            "commission_percentage": 3.5,
+            "description": "High floors Block B (Level 30–38) - Updated"
+          }
+        ],
+        "notes": [
+          "Reduced commission rates effective Jan 2026"
+        ]
+      },
+      {
+        "rule_id": "COM_003",
+        "rule_name": "Special Units Commission",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF is_garden_unit == True OR is_penthouse == True",
+            "commission_percentage": 3.5,
+            "description": "Garden Units and Penthouses - Updated"
+          }
+        ],
+        "notes": [
+          "Increased from 3% to 3.5%"
+        ]
+      },
+      {
+        "rule_id": "COM_004",
+        "rule_name": "Foreign Buyer Commission",
+        "buyer_type": "foreign",
+        "conditions": [
+          {
+            "condition": "IF buyer_type == 'foreign' AND block == 'B'",
+            "commission_percentage": 6.5,
+            "description": "Foreign buyer Block B - Reduced rate"
+          }
+        ],
+        "notes": [
+          "Reduced from 7% to 6.5%"
+        ]
+      },
+      {
+        "rule_id": "COM_005",
+        "rule_name": "New Year Bonus Commission",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF booking_during_cny == True",
+            "commission_percentage": 1.0,
+            "description": "Additional 1% for CNY bookings"
+          }
+        ],
+        "notes": [
+          "New promotional commission for CNY period"
+        ]
+      }
+    ],
+    "rebate_rules": [
+      {
+        "rule_id": "REB_001",
+        "rule_name": "Bumi Rebate",
+        "rebate_type": "bumi",
+        "conditions": [
+          {
+            "condition": "IF buyer_is_bumi == True",
+            "rebate_percentage": 7.0,
+            "description": "Increased Bumi rebate for 2026"
+          }
+        ],
+        "calculation_base": "Net Price",
+        "notes": [
+          "Increased from 5% to 7% for 2026"
+        ]
+      },
+      {
+        "rule_id": "REB_002",
+        "rule_name": "Standard Rebate by Unit Type",
+        "rebate_type": "standard",
+        "conditions": [
+          {
+            "condition": "IF unit_type == 'A1'",
+            "rebate_percentage": 10.0,
+            "description": "Type A1 units - Updated"
+          },
+          {
+            "condition": "IF unit_type == 'A2'",
+            "rebate_percentage": 7.0,
+            "description": "Type A2 units - Updated"
+          }
+        ],
+        "calculation_base": "Net Price after Bumi Rebate",
+        "notes": [
+          "Updated rates for 2026"
+        ]
+      },
+      {
+        "rule_id": "REB_003",
+        "rule_name": "Special Rebate – Block B by Floor Tier",
+        "rebate_type": "special",
+        "conditions": [
+          {
+            "condition": "IF block == 'B' AND floor_level >= 11 AND floor_level <= 19",
+            "rebate_percentage": 12.0,
+            "description": "Low floors Block B - Increased"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 20 AND floor_level <= 29",
+            "rebate_percentage": 8.0,
+            "description": "Mid floors Block B - Increased"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 30",
+            "rebate_percentage": 6.5,
+            "description": "High floors Block B - Slight increase"
+          }
+        ],
+        "calculation_base": "Net Price after Bumi Rebate",
+        "notes": [
+          "Enhanced rebates for 2026 clearance"
+        ]
+      },
+      {
+        "rule_id": "REB_005",
+        "rule_name": "New Year Special Rebate",
+        "rebate_type": "promotional",
+        "conditions": [
+          {
+            "condition": "IF booking_during_cny == True",
+            "rebate_percentage": 2.0,
+            "description": "CNY promotional rebate"
+          }
+        ],
+        "calculation_base": "Net Price",
+        "notes": [
+          "New promotional rebate for CNY 2026"
+        ]
+      }
+    ],
+    "referral_rules": [
+      {
+        "rule_id": "REF_001",
+        "rule_name": "Guest Referral – Marketing Events",
+        "referrer_category": "guest",
+        "reward_amount": 35000,
+        "reward_type": "fixed",
+        "conditions": [
+          "Must register during marketing event",
+          "Cannot refer own family",
+          "Booking within 2 months from event",
+          "SPA signing within 21 days"
+        ],
+        "payout_timing": "Upon Stage 2A"
+      },
+      {
+        "rule_id": "REF_002",
+        "rule_name": "Business Associate Referral",
+        "referrer_category": "business_associate",
+        "reward_amount": 35000,
+        "reward_type": "fixed",
+        "conditions": [
+          "Verification by Procurement or relevant staff"
+        ],
+        "payout_timing": "Upon Stage 2A"
+      }
+    ],
+    "price_adjustment_rules": [
+      {
+        "rule_id": "PRC_001",
+        "rule_name": "Floor Premium Recalibration 2026",
+        "adjustment_type": "floor_premium",
+        "conditions": [
+          {
+            "condition": "IF floor_level increments by 1",
+            "adjustment_amount": 3500,
+            "description": "RM3,500 per floor (increased)"
+          },
+          {
+            "condition": "IF floor_level == 20",
+            "adjustment_amount": 55000,
+            "description": "RM55k jump at Level 20"
+          },
+          {
+            "condition": "IF floor_level == 30",
+            "adjustment_amount": 35000,
+            "description": "RM35k jump at Level 30"
+          }
+        ]
+      }
+    ],
+    "package_rules": [
+      {
+        "rule_id": "PKG_001",
+        "rule_name": "Partially Furnished Package 2026",
+        "package_type": "partially_furnished",
+        "eligibility": [
+          "Foreign buyers",
+          "Block B standard units excluding GB1 & GB2"
+        ],
+        "value": "RM220,000",
+        "notes": [
+          "Increased package value for 2026"
+        ]
+      }
+    ]
+  },
+  "pseudo_code": {
+    "calculate_commission": "Updated commission calculation for 2026...",
+    "calculate_rebate": "Updated rebate calculation for 2026...",
+    "calculate_final_price": "Standard final price calculation..."
+  },
+  "extraction_confidence": 0.95,
+  "warnings": [
+    "This memo supersedes AVALUX-AD-MEMO-SM-2025-009"
+  ]
+}

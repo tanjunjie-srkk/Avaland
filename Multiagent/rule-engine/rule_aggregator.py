@@ -10,7 +10,7 @@ from datetime import datetime
 from enum import Enum
 import re
 
-from memo_manager import MemoManager, Memo, MemoMetadata, EnhancedRule, MemoType
+from memo_manager import xMemoManager, Memo, MemoMetadata, EnhancedRule, MemoType
 
 
 class ConflictType(Enum):

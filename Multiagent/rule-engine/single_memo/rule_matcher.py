@@ -6,7 +6,7 @@ Matches rules from the library against user context to find applicable rules.
 from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from rule_loader import Rule, RuleLibrary
-from condition_parser import ConditionParser
+from multi_memo.condition_parser import ConditionParser
 
 
 @dataclass

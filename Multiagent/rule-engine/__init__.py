@@ -5,20 +5,20 @@ Supports both single-memo and multi-memo workflows.
 """
 
 # Core rule engine (single memo)
-from .condition_parser import ConditionParser, parse_condition
-from .rule_loader import Rule, RuleLibrary, RuleLoader, load_rules
-from .rule_matcher import RuleMatcher, MatchedRule, find_matching_rules
-from .rule_engine import RuleEngine, CalculationResult, PricingResult, create_engine
+from .multi_memo.condition_parser import ConditionParser, parse_condition
+from .single_memo.rule_loader import Rule, RuleLibrary, RuleLoader, load_rules
+from .single_memo.rule_matcher import RuleMatcher, MatchedRule, find_matching_rules
+from .multi_memo.rule_engine import RuleEngine, CalculationResult, PricingResult, create_engine
 
 # Multi-memo support
-from .memo_manager import (
+from .multi_memo.memo_manager import (
     MemoType,
     MemoMetadata,
     EnhancedRule,
     Memo,
-    MemoManager
+    xMemoManager
 )
-from .rule_aggregator import (
+from .multi_memo.rule_aggregator import (
     ConflictType,
     ConflictResolution,
     RuleConflict,
@@ -26,7 +26,7 @@ from .rule_aggregator import (
     RuleAggregator,
     PriorityRanker
 )
-from .multi_memo_engine import (
+from .multi_memo.multi_memo_engine import (
     MatchedEnhancedRule,
     MultiMemoCalculationResult,
     MultiMemoPricingResult,
@@ -62,7 +62,7 @@ __all__ = [
     'MemoMetadata',
     'EnhancedRule',
     'Memo',
-    'MemoManager',
+    'xMemoManager',
     'ConflictType',
     'ConflictResolution',
     'RuleConflict',

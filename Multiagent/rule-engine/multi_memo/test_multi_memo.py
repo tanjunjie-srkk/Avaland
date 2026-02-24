@@ -26,7 +26,7 @@ def test_memo_loading():
     print("TEST 1: MEMO LOADING")
     print("=" * 60)
     
-    artifacts_path = Path(__file__).parent.parent / "artifact"
+    artifacts_path = Path(__file__).parent.parent.parent / "artifact"
     manager = MemoManager(str(artifacts_path))
     count = manager.load_all_memos()
     
@@ -160,7 +160,7 @@ def test_full_calculation():
     print("TEST 6: FULL MULTI-MEMO CALCULATION")
     print("=" * 60)
     
-    artifacts_path = Path(__file__).parent.parent / "artifact"
+    artifacts_path = Path(__file__).parent.parent.parent / "artifact"
     
     # Create engine
     engine = create_multi_memo_engine(str(artifacts_path))
@@ -251,7 +251,7 @@ def test_conflict_scenarios():
     print("TEST 7: CONFLICT RESOLUTION SCENARIOS")
     print("=" * 60)
     
-    artifacts_path = Path(__file__).parent.parent / "artifact"
+    artifacts_path = Path(__file__).parent.parent.parent / "artifact"
     manager = MemoManager(str(artifacts_path))
     manager.load_all_memos()
     
@@ -279,7 +279,7 @@ def test_traceability():
     print("TEST 8: TRACEABILITY")
     print("=" * 60)
     
-    artifacts_path = Path(__file__).parent.parent / "artifact"
+    artifacts_path = Path(__file__).parent.parent.parent / "artifact"
     engine = create_multi_memo_engine(str(artifacts_path))
     engine.retrieve_and_prepare()
     

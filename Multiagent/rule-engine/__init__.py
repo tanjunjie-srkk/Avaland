@@ -16,7 +16,7 @@ from .multi_memo.memo_manager import (
     MemoMetadata,
     EnhancedRule,
     Memo,
-    xMemoManager
+    MemoManager
 )
 from .multi_memo.rule_aggregator import (
     ConflictType,
@@ -62,7 +62,7 @@ __all__ = [
     'MemoMetadata',
     'EnhancedRule',
     'Memo',
-    'xMemoManager',
+    'MemoManager',
     'ConflictType',
     'ConflictResolution',
     'RuleConflict',

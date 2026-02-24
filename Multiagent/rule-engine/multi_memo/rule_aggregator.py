@@ -147,7 +147,7 @@ class RuleAggregator:
     Aggregates rules from multiple memos with priority ranking and conflict resolution.
     """
     
-    def __init__(self, memo_manager: xMemoManager):
+    def __init__(self, memo_manager: MemoManager):
         self.memo_manager = memo_manager
         self.library = AggregatedRuleLibrary()
         self._conflict_counter = 0

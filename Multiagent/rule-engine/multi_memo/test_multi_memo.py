@@ -27,7 +27,7 @@ def test_memo_loading():
     print("=" * 60)
     
     artifacts_path = Path(__file__).parent.parent / "artifact"
-    manager = xMemoManager(str(artifacts_path))
+    manager = MemoManager(str(artifacts_path))
     count = manager.load_all_memos()
     
     print(f"\n✅ Loaded {count} memos")
@@ -46,7 +46,7 @@ def test_memo_loading():
     return manager
 
 
-def test_date_filtering(manager: xMemoManager):
+def test_date_filtering(manager: MemoManager):
     """Test date-based filtering of memos."""
     print("\n" + "=" * 60)
     print("TEST 2: DATE FILTERING")
@@ -73,7 +73,7 @@ def test_date_filtering(manager: xMemoManager):
         print(f"  - {ref}: {memo.metadata.effective_period}")
 
 
-def test_project_filtering(manager: xMemoManager):
+def test_project_filtering(manager: MemoManager):
     """Test project-based filtering of memos."""
     print("\n" + "=" * 60)
     print("TEST 3: PROJECT FILTERING")
@@ -99,7 +99,7 @@ def test_project_filtering(manager: xMemoManager):
     print(f"✅ Found {len(fuzzy_filtered)} memos")
 
 
-def test_rule_aggregation(manager: xMemoManager):
+def test_rule_aggregation(manager: MemoManager):
     """Test rule aggregation with conflict detection."""
     print("\n" + "=" * 60)
     print("TEST 4: RULE AGGREGATION & CONFLICT DETECTION")
@@ -252,7 +252,7 @@ def test_conflict_scenarios():
     print("=" * 60)
     
     artifacts_path = Path(__file__).parent.parent / "artifact"
-    manager = xMemoManager(str(artifacts_path))
+    manager = MemoManager(str(artifacts_path))
     manager.load_all_memos()
     
     # Test different resolution strategies

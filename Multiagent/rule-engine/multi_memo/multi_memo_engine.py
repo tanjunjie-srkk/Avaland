@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from datetime import datetime
 
-from memo_manager import xMemoManager, Memo, MemoMetadata, EnhancedRule, MemoType
+from memo_manager import MemoManager, Memo, MemoMetadata, EnhancedRule, MemoType
 from rule_aggregator import (
     RuleAggregator, 
     AggregatedRuleLibrary, 
@@ -403,7 +403,7 @@ class MultiMemoRuleEngine:
     
     def __init__(self, artifacts_path: str):
         self.artifacts_path = Path(artifacts_path)
-        self.memo_manager = xMemoManager(str(self.artifacts_path))
+        self.memo_manager = MemoManager(str(self.artifacts_path))
         self.aggregator: Optional[RuleAggregator] = None
         self.library: Optional[AggregatedRuleLibrary] = None
         self.matcher: Optional[EnhancedRuleMatcher] = None

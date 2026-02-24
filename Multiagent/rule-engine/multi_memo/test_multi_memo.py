@@ -15,7 +15,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from memo_manager import xMemoManager, MemoType
+from memo_manager import MemoManager, MemoType
 from rule_aggregator import RuleAggregator, ConflictResolution, PriorityRanker
 from multi_memo_engine import MultiMemoRuleEngine, create_multi_memo_engine
 

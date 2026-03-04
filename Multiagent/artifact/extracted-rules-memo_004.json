@@ -1,0 +1,287 @@
+{
+  "memo_reference": "AVALUXE-AD-MEMO-SM-2025-009",
+  "effective_period": {
+    "start_date": "15 Jun 2025",
+    "end_date": "31 Dec 2025"
+  },
+  "project_name": "Aetas Sepueth",
+  "rules": {
+    "commission_rules": [
+      {
+        "rule_id": "COM2_001",
+        "rule_name": "Local Buyer REA Commission by Block and Floor Level",
+        "buyer_type": "local",
+        "conditions": [
+          {
+            "condition": "IF block == 'A'",
+            "commission_percentage": 2.0,
+            "description": "Block A all levels"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 11 AND floor_level <= 19",
+            "commission_percentage": 6.0,
+            "description": "Block B low floors (Level 11–19)"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 20 AND floor_level <= 29",
+            "commission_percentage": 5.0,
+            "description": "Block B mid floors (Level 20–29)"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 30 AND floor_level <= 38",
+            "commission_percentage": 4.0,
+            "description": "Block B high floors (Level 30–38)"
+          },
+          {
+            "condition": "IF block == 'B' AND unit_category IN ['Garden Unit', 'Penthouse']",
+            "commission_percentage": 7.0,
+            "description": "Special Units (Garden Units / Penthouse)"
+          }
+        ],
+        "notes": [
+          "30% payout upon SPA signing; 70% balance upon receipt of Stage 2A",
+          "Proposed to replace current flat 3% commission scheme"
+        ]
+      },
+      {
+        "rule_id": "COM2_002",
+        "rule_name": "Foreign Buyer REA Commission Rule",
+        "buyer_type": "foreign",
+        "conditions": [
+          {
+            "condition": "IF block == 'B' AND unit_category == 'Standard' AND unit_type NOT IN ['GB1', 'GB2']",
+            "commission_percentage": 7.0,
+            "description": "Foreign buyers of Block B standard units eligible for 7% commission"
+          }
+        ],
+        "notes": [
+          "Calculated on net price after discount and after deducting RM200,000 for partially furnished package",
+          "Foreign packages include 4% markup + RM200,000 added to list price"
+        ]
+      }
+    ],
+    "rebate_rules": [
+      {
+        "rule_id": "REB2_001",
+        "rule_name": "Bumiputera Rebate",
+        "rebate_type": "bumi",
+        "conditions": [
+          {
+            "condition": "IF buyer_is_bumiputera == TRUE",
+            "rebate_percentage": 5.0,
+            "description": "Applicable if Bumiputera purchase (standard policy continuation)"
+          }
+        ],
+        "calculation_base": "Rebate calculated on Net Price after Bumi Rebate",
+        "notes": []
+      },
+      {
+        "rule_id": "REB2_002",
+        "rule_name": "Standard Rebate",
+        "rebate_type": "standard",
+        "conditions": [
+          {
+            "condition": "IF unit_type == 'A1'",
+            "rebate_percentage": 9.0,
+            "description": "For A1 units"
+          },
+          {
+            "condition": "IF unit_type == 'A2'",
+            "rebate_percentage": 6.0,
+            "description": "For A2 units"
+          }
+        ],
+        "calculation_base": "Rebate calculated on Net Price after Bumiputera rebate",
+        "notes": [
+          "Applicable for all approved booking between 15 Jun 2025 – 31 Dec 2025"
+        ]
+      },
+      {
+        "rule_id": "REB2_003",
+        "rule_name": "Special Rebate for Block B Units",
+        "rebate_type": "special",
+        "conditions": [
+          {
+            "condition": "IF block == 'B' AND floor_level >= 1 AND floor_level <= 19",
+            "rebate_percentage": 7.0,
+            "description": "Block B low floors Level 1–19 special rebate"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 20 AND floor_level <= 29",
+            "rebate_percentage": 7.0,
+            "description": "Block B mid floors Level 20–29"
+          },
+          {
+            "condition": "IF block == 'B' AND floor_level >= 30",
+            "rebate_percentage": 6.0,
+            "description": "Block B high floors Level 30 & above"
+          },
+          {
+            "condition": "IF unit_type IN ['OB1', 'OB2']",
+            "rebate_percentage": 10.0,
+            "description": "OB1 & OB2 types special rebate"
+          }
+        ],
+        "calculation_base": "Rebate calculated on Net Price after Bumi Rebate",
+        "notes": [
+          "Promotional period: 15 Jun 2025 – 31 Dec 2025"
+        ]
+      },
+      {
+        "rule_id": "REB2_004",
+        "rule_name": "Additional Rebate Scheme",
+        "rebate_type": "additional",
+        "conditions": [
+          {
+            "condition": "IF purchase_mode == 'loan'",
+            "rebate_percentage": 7.0,
+            "description": "Additional 7% rebate for loan purchases"
+          },
+          {
+            "condition": "IF unit_type IN ['E', 'B2']",
+            "rebate_percentage": 1.4,
+            "description": "Budget allocation 1.4% per unit in E, B2; 1% for marketing events"
+          }
+        ],
+        "calculation_base": "Net Price after Bumiputera rebate",
+        "notes": [
+          "Subject to management discretion"
+        ]
+      }
+    ],
+    "referral_rules": [
+      {
+        "rule_id": "REF2_001",
+        "rule_name": "Guest Referral Scheme",
+        "referrer_category": "guest",
+        "reward_amount": 30000,
+        "reward_type": "fixed",
+        "conditions": [
+          "Guest must register during marketing event",
+          "Cannot refer own family members",
+          "Booking must occur within 2 months from event",
+          "SPA signing within 21 days from booking"
+        ],
+        "payout_timing": "Upon receipt of Stage 2A",
+        "notes": [
+          "For agent transactions, RM30,000 will be deducted from agent commission to prevent double claims"
+        ]
+      },
+      {
+        "rule_id": "REF2_002",
+        "rule_name": "Business Associate Referral Scheme",
+        "referrer_category": "business_associate",
+        "reward_amount": 30000,
+        "reward_type": "fixed",
+        "conditions": [
+          "Verification required by Procurement Department / staff working with Business Associates"
+        ],
+        "payout_timing": "Upon receipt of Stage 2A",
+        "notes": []
+      },
+      {
+        "rule_id": "REF2_003",
+        "rule_name": "Staff Referral Scheme",
+        "referrer_category": "staff",
+        "reward_amount": 30000,
+        "reward_type": "fixed",
+        "conditions": [
+          "Internal staff verification required"
+        ],
+        "payout_timing": "Upon receipt of Stage 2A",
+        "notes": []
+      },
+      {
+        "rule_id": "REF2_004",
+        "rule_name": "Buyer-Get-Buyer (B2B) Referral Scheme",
+        "referrer_category": "bgb",
+        "reward_amount": 2.0,
+        "reward_type": "percentage",
+        "conditions": [
+          "Applicable under company policy for up to 5 units"
+        ],
+        "payout_timing": "As per DOE allocation guidelines",
+        "notes": []
+      }
+    ],
+    "price_adjustment_rules": [
+      {
+        "rule_id": "PRC2_001",
+        "rule_name": "Floor Premium Adjustment",
+        "adjustment_type": "floor_premium",
+        "conditions": [
+          {
+            "condition": "IF floor_level < 20",
+            "adjustment_amount": "RM3,000 per floor",
+            "description": "Standard floor increment"
+          },
+          {
+            "condition": "IF floor_level == 20",
+            "adjustment_amount": "RM50,000",
+            "description": "Level 20 jump premium"
+          },
+          {
+            "condition": "IF floor_level == 30",
+            "adjustment_amount": "RM30,000",
+            "description": "Level 30 jump premium"
+          }
+        ]
+      },
+      {
+        "rule_id": "PRC2_002",
+        "rule_name": "Car Park Premiums",
+        "adjustment_type": "car_park_premium",
+        "conditions": [
+          {
+            "condition": "IF buyer requests additional tandem car park",
+            "adjustment_amount": "RM50,000",
+            "description": "Premium for one tandem lot"
+          },
+          {
+            "condition": "IF buyer requests additional single car park",
+            "adjustment_amount": "RM50,000",
+            "description": "Premium for one single bay"
+          }
+        ]
+      }
+    ],
+    "package_rules": [
+      {
+        "rule_id": "PKG2_001",
+        "rule_name": "Partially Furnished Package (Local Buyers)",
+        "package_type": "partially_furnished",
+        "eligibility": [
+          "Applicable for Block B low floors (Level 1–13A)"
+        ],
+        "value": "RM200,000 per unit",
+        "notes": [
+          "Included in proposed sales package for low floor units"
+        ]
+      },
+      {
+        "rule_id": "PKG2_002",
+        "rule_name": "Foreign Package (Foreign Buyer)",
+        "package_type": "foreign_package",
+        "eligibility": [
+          "Applicable for Block B standard units excluding GB1 and GB2"
+        ],
+        "value": "4% markup + RM200,000 partially furnished cost",
+        "notes": [
+          "Used to offset 7% agent commission",
+          "Foreign SPA price equals Net Price after discount",
+          "Ensures SPA price does not exceed KPKT limits"
+        ]
+      }
+    ]
+  },
+  "pseudo_code": {
+    "calculate_commission": "function calculate_commission(buyer_type, block, floor_level, unit_type, unit_category, sale_price):\n    commission_rate = 0\n\n    IF buyer_type == 'foreign' AND block == 'B' AND unit_type NOT IN ['GB1', 'GB2']:\n        commission_rate = 7%\n        # Commission calculated on net price after discount and after deducting RM200k for furnishing\n    ELSE IF buyer_type == 'local':\n        IF block == 'A':\n            commission_rate = 2%\n        ELSE IF block == 'B':\n            IF unit_category IN ['Garden Unit', 'Penthouse']:\n                commission_rate = 7%\n            ELSE IF floor_level >= 11 AND floor_level <= 19:\n                commission_rate = 6%\n            ELSE IF floor_level >= 20 AND floor_level <= 29:\n                commission_rate = 5%\n            ELSE IF floor_level >= 30 AND floor_level <= 38:\n                commission_rate = 4%\n    RETURN commission_rate",
+    "calculate_rebate": "function calculate_rebate(buyer_type, unit_type, block, floor_level, purchase_mode, is_bumi):\n    rebate_total = 0\n\n    IF is_bumi:\n        rebate_total += 5%\n\n    IF unit_type == 'A1':\n        rebate_total += 9%\n    ELSE IF unit_type == 'A2':\n        rebate_total += 6%\n\n    IF block == 'B':\n        IF floor_level >= 1 AND floor_level <= 19:\n            rebate_total += 7%\n        ELSE IF floor_level >= 20 AND floor_level <= 29:\n            rebate_total += 7%\n        ELSE IF floor_level >= 30:\n            rebate_total += 6%\n\n    IF unit_type IN ['OB1', 'OB2']:\n        rebate_total += 10%\n\n    IF purchase_mode == 'loan':\n        rebate_total += 7%\n\n    # Additional rebate budgets\n    IF unit_type IN ['E', 'B2']:\n        rebate_total += 1.4%\n\n    RETURN rebate_total",
+    "calculate_final_price": "function calculate_final_price(base_price, floor_level, car_park_choice, buyer_type, block, unit_type, purchase_mode, is_bumi):\n    adjusted_price = base_price\n\n    # Floor premium adjustments\n    IF floor_level < 20:\n        adjusted_price += floor_level * 3000\n    ELSE IF floor_level == 20:\n        adjusted_price += 50000\n    ELSE IF floor_level == 30:\n        adjusted_price += 30000\n\n    # Car park premium adjustments\n    IF car_park_choice == 'tandem':\n        adjusted_price += 50000\n    ELSE IF car_park_choice == 'single':\n        adjusted_price += 50000\n\n    # Foreign package adjustment\n    IF buyer_type == 'foreign' AND block == 'B' AND unit_type NOT IN ['GB1', 'GB2']:\n        adjusted_price += adjusted_price * 0.04 + 200000\n\n    rebate_total = calculate_rebate(buyer_type, unit_type, block, floor_level, purchase_mode, is_bumi)\n    final_price = adjusted_price * (1 - rebate_total / 100)\n    RETURN final_price"
+  },
+  "extraction_confidence": 0.98,
+  "warnings": [
+    "Some rebate percentages may overlap (standard and special) — clarification needed on stacking rules",
+    "Garden and Penthouse commission may need explicit confirmation whether included in Block B only"
+  ]
+}

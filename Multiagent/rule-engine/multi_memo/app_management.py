@@ -12,6 +12,8 @@ import streamlit as st
 import sys
 import pandas as pd
 import io
+import shutil
+import uuid
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, Optional
@@ -36,9 +38,24 @@ st.set_page_config(
     page_title="Avaland · Commission Management",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
+
+# ---------------------------------------------------------------------------
+# PATH CONSTANTS
+# ---------------------------------------------------------------------------
+
+CURRENT_DIR = Path(__file__).parent
+ARTIFACT_DIR = CURRENT_DIR.parent.parent / "artifact"
+MEMO_IMG_DIR = CURRENT_DIR.parent.parent.parent / "memo"
+MEMO_STORE_PATH = CURRENT_DIR / "memo_store.json"
+
+# Ensure OCR & rule-extract modules are importable
+OCR_DIR = CURRENT_DIR.parent.parent / "ocr"
+RULE_EXTRACT_DIR = CURRENT_DIR.parent.parent / "rule-extract"
+sys.path.insert(0, str(OCR_DIR))
+sys.path.insert(0, str(RULE_EXTRACT_DIR))
 
 # ---------------------------------------------------------------------------
 # DEMO DATA LOADER
@@ -3402,11 +3419,1092 @@ def render_entitlement_detail(agent: Agent):
 
 
 # ---------------------------------------------------------------------------
+# MEMO CSS (appended to page)
+# ---------------------------------------------------------------------------
+
+MEMO_CSS = """
+<style>
+/* ---- Memo management page ---- */
+.memo-page-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.5rem;
+}
+.memo-page-title { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
+.memo-page-subtitle { color: #64748b; font-size: 0.9rem; }
+.memo-status-approved {
+    background: #d1fae5; color: #059669;
+    padding: 0.25rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    display: inline-block;
+}
+.memo-status-pending {
+    background: #fef3c7; color: #d97706;
+    padding: 0.25rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    display: inline-block;
+}
+.memo-status-rejected {
+    background: #fee2e2; color: #dc2626;
+    padding: 0.25rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    display: inline-block;
+}
+.memo-kpi-card {
+    background: white; border-radius: 14px;
+    padding: 1.25rem 1.5rem; text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    border: 1px solid #f1f5f9;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.memo-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+.memo-kpi-value { font-size: 1.8rem; font-weight: 700; color: #0f172a; }
+.memo-kpi-label { font-size: 0.78rem; color: #64748b; font-weight: 500; margin-top: 0.2rem; }
+.memo-table-row {
+    background: white; border-radius: 12px;
+    padding: 1rem 1.5rem; margin: 0.5rem 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid #f1f5f9;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.2s ease;
+}
+.memo-table-row:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
+.memo-section-header {
+    background: linear-gradient(90deg, #1e3a5f 0%, #2d5a8e 100%);
+    color: white !important; padding: 0.6rem 1rem; border-radius: 8px;
+    font-weight: 600; margin-bottom: 0.4rem;
+}
+.memo-rule-card {
+    background: #f8fafc; border-left: 4px solid #059669;
+    padding: 0.75rem 1rem; margin: 0.4rem 0; border-radius: 0 8px 8px 0;
+}
+.memo-rule-card-flagged {
+    background: #fef3c7; border-left: 4px solid #dc2626;
+    padding: 0.75rem 1rem; margin: 0.4rem 0; border-radius: 0 8px 8px 0;
+}
+.memo-step-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #1e3a5f; color: white; font-weight: bold;
+    margin-right: 0.6rem; font-size: 1rem;
+}
+.memo-step-badge-done { background: #059669; }
+.memo-step-badge-active { background: #d97706; color: #333; }
+.memo-confidence-high { color: #059669; font-weight: bold; }
+.memo-confidence-med  { color: #d97706; font-weight: bold; }
+.memo-confidence-low  { color: #dc2626; font-weight: bold; }
+
+/* ---- Rule-oriented cards ---- */
+.rule-card {
+    background: white; border-radius: 14px;
+    padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.rule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+}
+.rule-card-flagged {
+    background: #fffbeb; border-left: 4px solid #f59e0b;
+}
+.rule-card-invalid {
+    background: #fef2f2; border-left: 4px solid #ef4444;
+}
+.rule-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.6rem;
+}
+.rule-card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; background: #f1f5f9; margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+.rule-card-title {
+    font-size: 1rem; font-weight: 700; color: #0f172a;
+}
+.rule-card-subtitle {
+    font-size: 0.78rem; color: #64748b; margin-top: 2px;
+}
+.rule-badge-active {
+    background: #dcfce7; color: #16a34a;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+}
+.rule-badge-flagged {
+    background: #fef3c7; color: #d97706;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+}
+.rule-badge-invalid {
+    background: #fee2e2; color: #dc2626;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+}
+.rule-info-block {
+    background: #f8fafc; border-radius: 10px;
+    padding: 0.75rem 1rem; flex: 1;
+    min-width: 0;
+}
+.rule-info-label {
+    font-size: 0.7rem; color: #94a3b8; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.rule-info-value {
+    font-size: 0.92rem; font-weight: 600; color: #0f172a;
+    margin-top: 0.2rem;
+}
+.rule-confidence-bar {
+    height: 6px; border-radius: 3px; background: #e2e8f0;
+    margin-top: 0.3rem; overflow: hidden;
+}
+.rule-confidence-fill {
+    height: 100%; border-radius: 3px;
+}
+.vbadge-validated {
+    background: #dcfce7; color: #16a34a;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600; margin-left: 0.4rem;
+}
+.vbadge-not-validated {
+    background: #fee2e2; color: #dc2626;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600; margin-left: 0.4rem;
+}
+.vbadge-pending {
+    background: #f1f5f9; color: #64748b;
+    padding: 0.2rem 0.7rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600; margin-left: 0.4rem;
+}
+
+/* ---- Project Dashboard ---- */
+.prj-card {
+    background: white; border-radius: 16px;
+    padding: 1.5rem; margin-bottom: 1.2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.prj-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+.prj-card-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 1rem;
+}
+.prj-name {
+    font-size: 1.15rem; font-weight: 700; color: #0f172a;
+}
+.prj-id {
+    font-size: 0.78rem; color: #94a3b8; margin-top: 2px;
+}
+.prj-status-active {
+    background: #dcfce7; color: #16a34a;
+    padding: 0.2rem 0.75rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+}
+.prj-status-completed {
+    background: #e0e7ff; color: #4f46e5;
+    padding: 0.2rem 0.75rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+}
+.prj-status-upcoming {
+    background: #fef3c7; color: #d97706;
+    padding: 0.2rem 0.75rem; border-radius: 20px;
+    font-size: 0.72rem; font-weight: 600;
+}
+.prj-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.65rem;
+}
+.prj-metric {
+    background: #f8fafc; border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+}
+.prj-metric-label {
+    font-size: 0.68rem; color: #94a3b8; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.4px;
+}
+.prj-metric-value {
+    font-size: 1rem; font-weight: 700; color: #0f172a;
+    margin-top: 0.15rem;
+}
+.prj-health-green { color: #16a34a; }
+.prj-health-yellow { color: #d97706; }
+.prj-health-red { color: #dc2626; }
+</style>
+"""
+
+
+# ---------------------------------------------------------------------------
+# MEMO DATA HELPERS
+# ---------------------------------------------------------------------------
+
+def _load_memo_store() -> list:
+    """Load the memo registry from memo_store.json."""
+    if MEMO_STORE_PATH.exists():
+        return json.loads(MEMO_STORE_PATH.read_text(encoding="utf-8"))
+    return []
+
+
+def _save_memo_store(data: list):
+    """Persist the memo registry."""
+    MEMO_STORE_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _load_memo_rules(rules_filename: str | None) -> dict | None:
+    """Load extracted rules JSON for a specific memo."""
+    if not rules_filename:
+        return None
+    p = ARTIFACT_DIR / rules_filename
+    if p.exists():
+        return json.loads(p.read_text(encoding="utf-8"))
+    return None
+
+
+def _get_memo_images(image_files: list) -> list:
+    """Return list of existing image paths from the memo folder."""
+    return [MEMO_IMG_DIR / f for f in image_files if (MEMO_IMG_DIR / f).exists()]
+
+
+def _next_memo_id(memos: list) -> str:
+    existing = []
+    for m in memos:
+        mid = m.get("memo_id", "")
+        if mid.startswith("MEMO_"):
+            try:
+                existing.append(int(mid.split("_")[1]))
+            except ValueError:
+                pass
+    return f"MEMO_{max(existing, default=0) + 1:03d}"
+
+
+def _memo_status_badge(status: str) -> str:
+    return f'<span class="memo-status-{status}">{status.upper()}</span>'
+
+
+def _memo_confidence_span(conf) -> str:
+    if conf is None:
+        return "—"
+    cls = "memo-confidence-high" if conf >= 0.8 else ("memo-confidence-med" if conf >= 0.6 else "memo-confidence-low")
+    return f'<span class="{cls}">{conf:.0%}</span>'
+
+
+# ---------------------------------------------------------------------------
+# MEMO PIPELINE FUNCTIONS (Upload flow)
+# ---------------------------------------------------------------------------
+
+def _convert_pdf_to_images(pdf_bytes: bytes, pdf_name: str) -> list:
+    """Convert uploaded PDF bytes to images using PyMuPDF."""
+    import fitz  # PyMuPDF
+
+    stem = Path(pdf_name).stem
+    output_dir = MEMO_IMG_DIR / f"{stem}_upload"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    tmp = output_dir / f"_tmp_{pdf_name}"
+    tmp.write_bytes(pdf_bytes)
+
+    doc = fitz.open(str(tmp))
+    image_paths = []
+    for i, page in enumerate(doc):
+        pix = page.get_pixmap(dpi=300)
+        out = output_dir / f"{stem}_page-{i+1:04d}.jpg"
+        pix.save(str(out))
+        image_paths.append(out)
+    doc.close()
+    tmp.unlink(missing_ok=True)
+    return image_paths
+
+
+def _run_ocr_text(image_paths: list) -> dict:
+    """Run text OCR on page images.
+
+    Returns data in the ``{"results": [{"page_number", "model_output"}]}``
+    format expected by ``format_ocr_for_agent``.
+    """
+    from ocr import ocr_images_with_chat_model, _maybe_parse_json
+
+    user_prompt = (
+        "Perform OCR on the image. Output only valid JSON (no markdown, no extra text). "
+        "Follow the JSON schema described in the instructions and set confidence values realistically."
+    )
+    content = ocr_images_with_chat_model(image_paths=image_paths, user_prompt=user_prompt)
+    parsed = _maybe_parse_json(content)
+
+    # Build per-page "results" list that format_ocr_for_agent expects
+    results = []
+    if isinstance(parsed, dict) and "pages" in parsed:
+        for page_data in parsed["pages"]:
+            pn = page_data.get("page_number", len(results) + 1)
+            idx = min(pn - 1, len(image_paths) - 1)
+            results.append({
+                "page_number": pn,
+                "file": image_paths[idx].name if image_paths else "",
+                "model_output": {"pages": [page_data]},
+            })
+    else:
+        # Fallback: wrap entire output as a single result
+        results.append({
+            "page_number": 1,
+            "file": image_paths[0].name if image_paths else "",
+            "model_output": parsed if isinstance(parsed, dict) else {"raw": content},
+        })
+
+    return {"mode": "batch", "results": results}
+
+
+def _run_ocr_table(image_paths: list) -> dict:
+    """Run table OCR on page images.
+
+    Returns data in the ``{"results": [{"page_number", "model_output"}]}``
+    format expected by ``format_ocr_for_agent``.  ``model_output`` is kept
+    as a **raw string** because the formatter parses it itself.
+    """
+    from ocrtable import ocr_images_with_chat_model as ocr_table_batch
+
+    user_prompt = (
+        "You are a TABLE-ONLY OCR and DOCUMENT STRUCTURE engine.\n"
+        "Your role is STRICTLY LIMITED to tables extraction.\n"
+        "Return valid JSON only. Detect all tables in the document."
+    )
+    content = ocr_table_batch(image_paths=image_paths, user_prompt=user_prompt)
+
+    # format_ocr_for_agent expects model_output as a raw *string* for tables.
+    # Batch mode returns one response covering all pages; wrap as single result.
+    return {
+        "mode": "batch",
+        "results": [{
+            "page_number": 1,
+            "file": ", ".join(p.name for p in image_paths),
+            "model_output": content,  # keep raw string – formatter parses it
+        }],
+    }
+
+
+def _run_rule_extraction(text_data: dict, table_data: dict) -> dict:
+    """Run the rule extraction agent on OCR outputs."""
+    from rule import format_ocr_for_agent, extract_rules
+    ocr_content = format_ocr_for_agent(text_data, table_data)
+    return extract_rules(ocr_content)
+
+
+def _save_new_memo(rules, image_paths, pdf_name, memo_ref, project_name, start_date, end_date, status):
+    """Persist a new memo: save rules JSON + add entry to memo_store."""
+    memos = _load_memo_store()
+    memo_id = _next_memo_id(memos)
+
+    # Save rules JSON
+    rules_filename = f"extracted-rules-{memo_id.lower()}.json"
+    (ARTIFACT_DIR / rules_filename).write_text(
+        json.dumps(rules, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+    # Copy images to central memo folder
+    image_filenames = []
+    for img in image_paths:
+        target = MEMO_IMG_DIR / img.name
+        if not target.exists():
+            shutil.copy2(img, target)
+        image_filenames.append(img.name)
+
+    # Rule counts
+    rs = rules.get("rules", {})
+    rule_count = {
+        k: len(rs.get(k, []))
+        for k in ["commission_rules", "rebate_rules", "referral_rules", "price_adjustment_rules", "package_rules"]
+    }
+
+    entry = {
+        "memo_id": memo_id,
+        "memo_reference": memo_ref or rules.get("memo_reference", memo_id),
+        "project_name": project_name or rules.get("project_name", ""),
+        "effective_period": {"start_date": start_date, "end_date": end_date},
+        "upload_date": datetime.now().strftime("%Y-%m-%d"),
+        "status": status,
+        "pdf_filename": pdf_name,
+        "image_folder": Path(pdf_name).stem,
+        "image_files": image_filenames,
+        "rules_file": rules_filename,
+        "extraction_confidence": rules.get("extraction_confidence"),
+        "reviewer_notes": "",
+        "rule_count": rule_count,
+    }
+    memos.append(entry)
+    _save_memo_store(memos)
+
+
+def _reset_upload_state():
+    """Clear upload-related session state."""
+    for k in ["upload_step", "upload_images", "upload_rules", "upload_pdf_name",
+              "upload_text_ocr", "upload_table_ocr"]:
+        st.session_state.pop(k, None)
+
+
+# ---------------------------------------------------------------------------
+# MEMO SECTION META (for rule display)
+# ---------------------------------------------------------------------------
+
+_MEMO_SECTION_META = {
+    "commission_rules":       ("💰", "Commission Rules"),
+    "rebate_rules":           ("🏷️", "Rebate Rules"),
+    "referral_rules":         ("🤝", "Referral Rules"),
+    "price_adjustment_rules": ("📐", "Price Adjustments"),
+    "package_rules":          ("📦", "Packages"),
+}
+
+
+# ---------------------------------------------------------------------------
+# MEMO RENDER: extracted rules summary
+# ---------------------------------------------------------------------------
+
+def _render_memo_rules_summary(rules: dict):
+    """Compact display of all rules inside a memo (for inbox expanders)."""
+    if not rules or "rules" not in rules:
+        st.info("No extracted rules available for this memo.")
+        return
+
+    rule_sections = rules["rules"]
+    for key, (icon, title) in _MEMO_SECTION_META.items():
+        items = rule_sections.get(key, [])
+        if not items:
+            continue
+        st.markdown(f'<div class="memo-section-header">{icon} {title} ({len(items)})</div>', unsafe_allow_html=True)
+        for rule in items:
+            rid = rule.get("rule_id", "")
+            rname = rule.get("rule_name", "Untitled")
+            with st.container():
+                st.markdown(f"**{rid}** — {rname}")
+                conditions = rule.get("conditions", [])
+                if conditions and isinstance(conditions[0], dict):
+                    rows = []
+                    for c in conditions:
+                        rows.append({
+                            "Condition": c.get("condition", ""),
+                            "Value": str(
+                                c.get("commission_percentage",
+                                c.get("rebate_percentage",
+                                c.get("adjustment_amount", "")))
+                            ) + ("%" if "percentage" in str(c) else ""),
+                            "Description": c.get("description", ""),
+                        })
+                    st.table(rows)
+                elif conditions:
+                    for c in conditions:
+                        st.markdown(f"- {c}")
+                notes = rule.get("notes", [])
+                if notes:
+                    st.caption("Notes: " + " · ".join(notes))
+                st.markdown("---")
+
+
+# ---------------------------------------------------------------------------
+# MEMO RENDER: extracted rules with flag controls (review panel)
+# ---------------------------------------------------------------------------
+
+def _render_memo_rules_panel(rules: dict | None, memo_id: str):
+    """Right-panel rules display with per-rule flag/unflag toggle."""
+    if not rules or "rules" not in rules:
+        st.info("No extracted rules available.")
+        return
+
+    flag_key = f"flagged_{memo_id}"
+    if flag_key not in st.session_state:
+        st.session_state[flag_key] = set()
+
+    rule_sections = rules["rules"]
+    for section_key, (icon, title) in _MEMO_SECTION_META.items():
+        items = rule_sections.get(section_key, [])
+        if not items:
+            continue
+
+        st.markdown(f'<div class="memo-section-header">{icon} {title} ({len(items)})</div>', unsafe_allow_html=True)
+        for rule in items:
+            rid = rule.get("rule_id", "?")
+            rname = rule.get("rule_name", "Untitled")
+            is_flagged = rid in st.session_state[flag_key]
+
+            card_cls = "memo-rule-card-flagged" if is_flagged else "memo-rule-card"
+            st.markdown(f'<div class="{card_cls}"><strong>{rid}</strong> — {rname}</div>', unsafe_allow_html=True)
+
+            conditions = rule.get("conditions", [])
+            if conditions:
+                if isinstance(conditions[0], dict):
+                    for c in conditions:
+                        cond = c.get("condition", "")
+                        desc = c.get("description", "")
+                        val = c.get("commission_percentage",
+                              c.get("rebate_percentage",
+                              c.get("adjustment_amount", "")))
+                        st.markdown(f"&nbsp;&nbsp;&nbsp;`{cond}` → **{val}** — {desc}")
+                else:
+                    for c in conditions:
+                        st.markdown(f"&nbsp;&nbsp;&nbsp;• {c}")
+
+            notes = rule.get("notes", [])
+            if notes:
+                st.caption("Notes: " + " · ".join(notes))
+
+            btn_label = "🚩 Unflag" if is_flagged else "🏳️ Flag mismatch"
+            if st.button(btn_label, key=f"flag_{memo_id}_{rid}"):
+                if is_flagged:
+                    st.session_state[flag_key].discard(rid)
+                else:
+                    st.session_state[flag_key].add(rid)
+                st.rerun()
+
+    flagged = st.session_state[flag_key]
+    if flagged:
+        st.warning(f"⚠️ {len(flagged)} rule(s) flagged: {', '.join(sorted(flagged))}")
+
+
+# ---------------------------------------------------------------------------
+# MEMO RENDER: extracted rules for upload review step
+# ---------------------------------------------------------------------------
+
+def _render_extracted_rules_upload(rules: dict):
+    """Display extracted rules during the upload review step."""
+    if not rules or "rules" not in rules:
+        st.warning("No rules could be extracted.")
+        if "raw_response" in rules:
+            with st.expander("Raw model response"):
+                st.code(rules["raw_response"])
+        return
+
+    rule_sections = rules["rules"]
+    mc1, mc2, mc3, mc4, mc5 = st.columns(5)
+    mc1.metric("Commission", len(rule_sections.get("commission_rules", [])))
+    mc2.metric("Rebate", len(rule_sections.get("rebate_rules", [])))
+    mc3.metric("Referral", len(rule_sections.get("referral_rules", [])))
+    mc4.metric("Price Adj.", len(rule_sections.get("price_adjustment_rules", [])))
+    mc5.metric("Package", len(rule_sections.get("package_rules", [])))
+
+    conf = rules.get("extraction_confidence")
+    if conf is not None:
+        st.progress(conf, text=f"Extraction confidence: {conf:.0%}")
+
+    for w in rules.get("warnings", []):
+        st.warning(f"⚠️ {w}")
+
+    for section_key, (icon, title) in _MEMO_SECTION_META.items():
+        items = rule_sections.get(section_key, [])
+        if not items:
+            continue
+        st.markdown(f'<div class="memo-section-header">{icon} {title} ({len(items)})</div>', unsafe_allow_html=True)
+        for rule in items:
+            rid = rule.get("rule_id", "?")
+            rname = rule.get("rule_name", "Untitled")
+            st.markdown(f"**{rid}** — {rname}")
+            conditions = rule.get("conditions", [])
+            if conditions and isinstance(conditions[0], dict):
+                rows = [{
+                    "Condition": c.get("condition", ""),
+                    "Value": str(c.get("commission_percentage", c.get("rebate_percentage", c.get("adjustment_amount", "")))),
+                    "Description": c.get("description", ""),
+                } for c in conditions]
+                st.table(rows)
+            elif conditions:
+                for c in conditions:
+                    st.markdown(f"- {c}")
+            notes = rule.get("notes", [])
+            if notes:
+                st.caption("Notes: " + " · ".join(notes))
+            st.markdown("---")
+
+    pseudo = rules.get("pseudo_code", {})
+    if pseudo:
+        with st.expander("📝 Generated Pseudo-code"):
+            for name, code in pseudo.items():
+                st.markdown(f"**{name}**")
+                st.code(code, language="python")
+
+
+# ---------------------------------------------------------------------------
+# MEMO PAGE: Upload Sub-View
+# ---------------------------------------------------------------------------
+
+def render_memo_upload():
+    """3-step wizard: Upload PDF → OCR + Extract → Review & Save."""
+
+    # Back button
+    if st.button("← Back to Memorandums", key="upload_back"):
+        _reset_upload_state()
+        st.session_state["memo_sub_view"] = "list"
+        st.rerun()
+
+    # Session state init
+    if "upload_step" not in st.session_state:
+        st.session_state.upload_step = "upload"
+    if "upload_images" not in st.session_state:
+        st.session_state.upload_images = []
+    if "upload_rules" not in st.session_state:
+        st.session_state.upload_rules = None
+    if "upload_pdf_name" not in st.session_state:
+        st.session_state.upload_pdf_name = ""
+
+    # Progress indicator
+    steps = ["Upload PDF", "Extract Rules", "Review & Save"]
+    current = {"upload": 0, "extracting": 1, "review": 2}.get(st.session_state.upload_step, 0)
+    cols = st.columns(len(steps))
+    for i, (col, label) in enumerate(zip(cols, steps)):
+        if i < current:
+            col.markdown(f'<span class="memo-step-badge memo-step-badge-done">✓</span> **{label}**', unsafe_allow_html=True)
+        elif i == current:
+            col.markdown(f'<span class="memo-step-badge memo-step-badge-active">{i+1}</span> **{label}**', unsafe_allow_html=True)
+        else:
+            col.markdown(f'<span class="memo-step-badge">{i+1}</span> {label}', unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── STEP 1 – Upload ──
+    if st.session_state.upload_step == "upload":
+        st.subheader("Step 1: Upload Memorandum PDF")
+        uploaded = st.file_uploader("Choose a PDF file", type=["pdf"], key="memo_pdf_uploader")
+
+        if uploaded is not None:
+            st.success(f"Uploaded: **{uploaded.name}** ({uploaded.size / 1024:.1f} KB)")
+
+            with st.spinner("Converting PDF to page images…"):
+                pdf_bytes = uploaded.read()
+                image_paths = _convert_pdf_to_images(pdf_bytes, uploaded.name)
+                st.session_state.upload_images = image_paths
+                st.session_state.upload_pdf_name = uploaded.name
+
+            st.markdown(f"**{len(image_paths)} page(s) detected.**")
+
+            thumb_cols = st.columns(min(len(image_paths), 5))
+            for i, (col, img) in enumerate(zip(thumb_cols, image_paths)):
+                col.image(str(img), caption=f"Page {i+1}", use_container_width=True)
+
+            st.markdown("---")
+            if st.button("🚀 Extract Rules", type="primary", use_container_width=True):
+                st.session_state.upload_step = "extracting"
+                st.rerun()
+
+    # ── STEP 2 – Extraction ──
+    elif st.session_state.upload_step == "extracting":
+        st.subheader("Step 2: Extracting Rules")
+        image_paths = st.session_state.upload_images
+
+        if not image_paths:
+            st.error("No images found. Please go back and upload a PDF.")
+            if st.button("← Back"):
+                st.session_state.upload_step = "upload"
+                st.rerun()
+            return
+
+        progress = st.progress(0, text="Starting extraction pipeline…")
+
+        progress.progress(10, text="Running text OCR…")
+        with st.spinner("Running text OCR on all pages…"):
+            text_ocr = _run_ocr_text(image_paths)
+            st.session_state["upload_text_ocr"] = text_ocr
+
+        progress.progress(40, text="Text OCR complete. Running table OCR…")
+        with st.spinner("Running table OCR on all pages…"):
+            table_ocr = _run_ocr_table(image_paths)
+            st.session_state["upload_table_ocr"] = table_ocr
+
+        progress.progress(70, text="Table OCR complete. Extracting rules…")
+        with st.spinner("Rule Extraction Agent is analysing OCR output…"):
+            rules = _run_rule_extraction(text_ocr, table_ocr)
+            st.session_state.upload_rules = rules
+
+        progress.progress(100, text="Extraction complete!")
+        st.session_state.upload_step = "review"
+        st.rerun()
+
+    # ── STEP 3 – Review & Save ──
+    elif st.session_state.upload_step == "review":
+        st.subheader("Step 3: Review Extracted Rules")
+
+        rules = st.session_state.upload_rules
+        image_paths = st.session_state.upload_images
+        pdf_name = st.session_state.upload_pdf_name
+
+        if rules is None:
+            st.error("No extraction results found.")
+            if st.button("← Start over"):
+                _reset_upload_state()
+                st.rerun()
+            return
+
+        col_left, col_right = st.columns([1, 1])
+
+        with col_left:
+            st.markdown('<div class="memo-section-header">📄 Original Memo Pages</div>', unsafe_allow_html=True)
+            if image_paths:
+                scroll_html = '<div style="max-height:75vh; overflow-y:auto; border:1px solid #e2e8f0; border-radius:8px; padding:8px; background:#f8fafc;">'
+                for i, img in enumerate(image_paths):
+                    import base64 as _b64
+                    img_bytes = Path(img).read_bytes()
+                    b64 = _b64.b64encode(img_bytes).decode()
+                    scroll_html += (
+                        f'<div style="margin-bottom:12px;">'
+                        f'<div style="font-size:0.8rem;font-weight:600;color:#475569;margin-bottom:4px;">Page {i+1}</div>'
+                        f'<img src="data:image/jpeg;base64,{b64}" style="width:100%;border-radius:4px;"/>'
+                        f'</div>'
+                    )
+                scroll_html += '</div>'
+                st.markdown(scroll_html, unsafe_allow_html=True)
+
+        with col_right:
+            st.markdown('<div class="memo-section-header">📋 Extracted Rules</div>', unsafe_allow_html=True)
+            _render_extracted_rules_upload(rules)
+
+        st.markdown("---")
+
+        # Metadata form
+        st.subheader("Save Memorandum")
+        fc1, fc2 = st.columns(2)
+        with fc1:
+            memo_ref = st.text_input("Memo Reference", value=rules.get("memo_reference", ""), key="upload_memo_ref")
+            project_name = st.text_input("Project Name", value=rules.get("project_name", ""), key="upload_proj_name")
+        with fc2:
+            eff = rules.get("effective_period", {})
+            start_date = st.text_input("Effective Start Date", value=eff.get("start_date", ""), key="upload_start")
+            end_date = st.text_input("Effective End Date", value=eff.get("end_date", ""), key="upload_end")
+
+        st.markdown("---")
+        btn1, btn2, btn3 = st.columns([1, 1, 2])
+
+        with btn1:
+            if st.button("💾 Save as Pending", type="primary", use_container_width=True, key="upload_save_pending"):
+                _save_new_memo(rules, image_paths, pdf_name, memo_ref, project_name, start_date, end_date, "pending")
+                st.success("Memo saved as **Pending**!")
+                _reset_upload_state()
+                st.session_state["memo_sub_view"] = "list"
+                st.rerun()
+
+        with btn2:
+            if st.button("✅ Save & Approve", use_container_width=True, key="upload_save_approved"):
+                _save_new_memo(rules, image_paths, pdf_name, memo_ref, project_name, start_date, end_date, "approved")
+                st.success("Memo saved as **Approved**!")
+                _reset_upload_state()
+                st.session_state["memo_sub_view"] = "list"
+                st.rerun()
+
+        with btn3:
+            if st.button("🗑️ Discard & Start Over", use_container_width=True, key="upload_discard"):
+                _reset_upload_state()
+                st.rerun()
+
+
+# ---------------------------------------------------------------------------
+# MEMO PAGE: Review Sub-View (side-by-side comparison)
+# ---------------------------------------------------------------------------
+
+def render_memo_review(memo_id: str):
+    """Full-screen side-by-side review for a specific memo."""
+    memos = _load_memo_store()
+    memo = next((m for m in memos if m["memo_id"] == memo_id), None)
+    if not memo:
+        st.error(f"Memo {memo_id} not found.")
+        return
+
+    # Back button
+    if st.button("← Back to Memorandums", key="review_back"):
+        st.session_state["memo_sub_view"] = "list"
+        st.session_state.pop("memo_review_id", None)
+        st.rerun()
+
+    # Meta strip
+    mc1, mc2, mc3, mc4 = st.columns(4)
+    mc1.metric("Reference", memo["memo_reference"])
+    mc2.metric("Project", memo["project_name"])
+    mc3.metric("Status", memo["status"].upper())
+    conf = memo.get("extraction_confidence")
+    mc4.metric("Confidence", f"{conf:.0%}" if conf else "—")
+
+    st.markdown("---")
+
+    # Side-by-side
+    col_left, col_right = st.columns([1, 1])
+
+    _SCROLL_H = 700  # shared height so both panels match
+
+    with col_left:
+        st.markdown('<div class="memo-section-header">📄 Original Memo</div>', unsafe_allow_html=True)
+        paths = _get_memo_images(memo.get("image_files", []))
+        if paths:
+            img_container = st.container(height=_SCROLL_H)
+            with img_container:
+                for i, p in enumerate(paths):
+                    st.caption(f"Page {i+1} of {len(paths)}")
+                    st.image(str(p), use_container_width=True)
+        else:
+            st.warning("No original memo images found.")
+
+    with col_right:
+        st.markdown('<div class="memo-section-header">📋 Extracted Rules</div>', unsafe_allow_html=True)
+        rules = _load_memo_rules(memo.get("rules_file"))
+        rules_container = st.container(height=_SCROLL_H)
+        with rules_container:
+            _render_memo_rules_panel(rules, memo["memo_id"])
+
+    # Action buttons
+    st.markdown("---")
+    acol1, acol2, acol3 = st.columns([1, 1, 3])
+
+    with acol1:
+        if st.button("✅ Approve Memo", type="primary", disabled=memo["status"] == "approved", key="review_approve"):
+            for m in memos:
+                if m["memo_id"] == memo["memo_id"]:
+                    m["status"] = "approved"
+            _save_memo_store(memos)
+            st.success("Memo approved.")
+            st.rerun()
+
+    with acol2:
+        flagged = st.session_state.get(f"flagged_{memo['memo_id']}", set())
+        if st.button("❌ Reject Memo", disabled=memo["status"] == "rejected", key="review_reject"):
+            note = f"Rejected with {len(flagged)} flagged rule(s): {', '.join(sorted(flagged))}" if flagged else "Rejected by reviewer."
+            for m in memos:
+                if m["memo_id"] == memo["memo_id"]:
+                    m["status"] = "rejected"
+                    m["reviewer_notes"] = note
+            _save_memo_store(memos)
+            st.warning("Memo rejected.")
+            st.rerun()
+
+
+# ---------------------------------------------------------------------------
+# MEMO PAGE: List Sub-View (main inbox table)
+# ---------------------------------------------------------------------------
+
+def render_memo_list():
+    """Main memorandums list with KPIs, filters, and expandable rows."""
+    memos = _load_memo_store()
+
+    # KPI cards
+    approved = sum(1 for m in memos if m["status"] == "approved")
+    pending  = sum(1 for m in memos if m["status"] == "pending")
+    rejected = sum(1 for m in memos if m["status"] == "rejected")
+    total    = len(memos)
+
+    c1, c2, c3, c4 = st.columns(4)
+    for col, val, label, color in [
+        (c1, total,    "Total Memos",    "#0f172a"),
+        (c2, approved, "Approved",       "#059669"),
+        (c3, pending,  "Pending Review", "#d97706"),
+        (c4, rejected, "Rejected",       "#dc2626"),
+    ]:
+        col.markdown(f"""
+        <div class="memo-kpi-card">
+            <div class="memo-kpi-value" style="color:{color}">{val}</div>
+            <div class="memo-kpi-label">{label}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Filter tabs
+    filter_tab = st.radio(
+        "Filter",
+        ["All", "Pending", "Approved", "Rejected"],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="memo_filter_tab",
+    )
+
+    if filter_tab != "All":
+        filtered = [m for m in memos if m["status"] == filter_tab.lower()]
+    else:
+        filtered = memos
+
+    if not filtered:
+        st.info("No memos match the selected filter.")
+        return
+
+    # Table header
+    st.markdown(
+        '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:0.5rem 1.5rem;'
+        'color:#94a3b8;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">'
+        '<span>Title</span><span>Submitted By</span><span>Date</span><span>Status</span><span>Action</span>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+    # Memo rows
+    for memo in filtered:
+        ref = memo["memo_reference"]
+        proj = memo["project_name"]
+        badge = _memo_status_badge(memo["status"])
+        conf = _memo_confidence_span(memo.get("extraction_confidence"))
+        period = f'{memo["effective_period"]["start_date"]} → {memo["effective_period"]["end_date"]}'
+        upload_date = memo.get("upload_date", "—")
+
+        rc = memo.get("rule_count") or {}
+        total_rules = sum(rc.values()) if rc else 0
+
+        # Row card
+        st.markdown(f"""
+        <div class="memo-table-row">
+            <div style="flex:2">
+                <div style="font-weight:600;color:#0f172a;">{ref}</div>
+                <div style="color:#64748b;font-size:0.82rem;">{proj}</div>
+            </div>
+            <div style="flex:1;color:#475569;font-size:0.88rem;">Admin</div>
+            <div style="flex:1;color:#475569;font-size:0.88rem;">{upload_date}</div>
+            <div style="flex:1">{badge}</div>
+            <div style="flex:1;font-size:0.82rem;color:#64748b;">
+                {total_rules} rules · Conf: {conf}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Expandable detail
+        with st.expander(f"View details — {ref}", expanded=False):
+            # Meta row
+            mc1, mc2, mc3, mc4 = st.columns(4)
+            mc1.markdown(f"**Status:** {badge}", unsafe_allow_html=True)
+            mc2.markdown(f"**Period:** {period}")
+            mc3.markdown(f"**Confidence:** {conf}", unsafe_allow_html=True)
+            mc4.markdown(f"**Rules extracted:** {total_rules}")
+
+            st.markdown(f"**Uploaded:** {upload_date}  ·  **PDF:** `{memo.get('pdf_filename', '—')}`")
+
+            if memo.get("reviewer_notes"):
+                st.info(f"📝 Reviewer note: {memo['reviewer_notes']}")
+
+            # Side-by-side comparison
+            col_img, col_rules = st.columns([1, 1])
+            with col_img:
+                st.markdown('<div class="memo-section-header">📄 Original Memo</div>', unsafe_allow_html=True)
+                paths = _get_memo_images(memo.get("image_files", []))
+                if paths:
+                    import base64 as _b64
+                    img_container = st.container(height=600)
+                    with img_container:
+                        for idx, img_path in enumerate(paths):
+                            st.caption(f"Page {idx+1} of {len(paths)}")
+                            st.image(str(img_path), use_container_width=True)
+                else:
+                    st.warning("Original memo images not found.")
+
+            with col_rules:
+                st.markdown('<div class="memo-section-header">📋 Extracted Rules</div>', unsafe_allow_html=True)
+                rules = _load_memo_rules(memo.get("rules_file"))
+                if rules:
+                    # Scrollable container for rules
+                    rules_container = st.container(height=600)
+                    with rules_container:
+                        _render_memo_rules_summary(rules)
+                else:
+                    st.info("Rules have not been extracted yet.")
+
+            # Approve / Reject
+            if memo["status"] == "pending":
+                st.markdown("---")
+                st.subheader("Review Actions")
+                note = st.text_area("Reviewer notes", key=f"note_{memo['memo_id']}")
+                act1, act2, act3, _ = st.columns([1, 1, 1, 2])
+                with act1:
+                    if st.button("✅ Approve", key=f"approve_{memo['memo_id']}", type="primary"):
+                        for m in memos:
+                            if m["memo_id"] == memo["memo_id"]:
+                                m["status"] = "approved"
+                                m["reviewer_notes"] = note
+                        _save_memo_store(memos)
+                        st.success("Memo approved!")
+                        st.rerun()
+                with act2:
+                    if st.button("❌ Reject", key=f"reject_{memo['memo_id']}"):
+                        for m in memos:
+                            if m["memo_id"] == memo["memo_id"]:
+                                m["status"] = "rejected"
+                                m["reviewer_notes"] = note
+                        _save_memo_store(memos)
+                        st.warning("Memo rejected.")
+                        st.rerun()
+                with act3:
+                    if st.button("🔍 Full Review", key=f"fullreview_{memo['memo_id']}"):
+                        st.session_state["memo_sub_view"] = "review"
+                        st.session_state["memo_review_id"] = memo["memo_id"]
+                        st.rerun()
+
+            if memo["status"] in ("approved", "rejected"):
+                st.markdown("---")
+                rev1, rev2, _ = st.columns([1, 1, 3])
+                with rev1:
+                    if st.button("🔄 Move to Pending", key=f"reopen_{memo['memo_id']}"):
+                        for m in memos:
+                            if m["memo_id"] == memo["memo_id"]:
+                                m["status"] = "pending"
+                        _save_memo_store(memos)
+                        st.rerun()
+                with rev2:
+                    if st.button("🔍 Full Review", key=f"fullreview2_{memo['memo_id']}"):
+                        st.session_state["memo_sub_view"] = "review"
+                        st.session_state["memo_review_id"] = memo["memo_id"]
+                        st.rerun()
+
+
+# ---------------------------------------------------------------------------
+# MEMORANDUMS PAGE (Router)
+# ---------------------------------------------------------------------------
+
+def render_memorandums_page():
+    """Top-level Memorandums page with sub-view routing."""
+    st.markdown(MEMO_CSS, unsafe_allow_html=True)
+
+    # Determine sub-view
+    sub_view = st.session_state.get("memo_sub_view", "list")
+
+    if sub_view == "upload":
+        # Header
+        st.markdown("""
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
+            <div style="font-size:1.8rem; font-weight:800; color:#0f172a;">📤 Add New Memorandum</div>
+        </div>
+        """, unsafe_allow_html=True)
+        render_memo_upload()
+
+    elif sub_view == "review":
+        memo_id = st.session_state.get("memo_review_id")
+        if memo_id:
+            st.markdown("""
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
+                <div style="font-size:1.8rem; font-weight:800; color:#0f172a;">🔍 Memorandum Review</div>
+            </div>
+            """, unsafe_allow_html=True)
+            render_memo_review(memo_id)
+        else:
+            st.session_state["memo_sub_view"] = "list"
+            st.rerun()
+
+    else:
+        # Default: list view
+        # Header with "New Memorandum" button
+        col_title, col_btn = st.columns([4, 1])
+        with col_title:
+            st.markdown("""
+            <div style="margin-bottom:0.5rem;">
+                <div style="font-size:1.8rem; font-weight:800; color:#0f172a;">📋 Memorandums</div>
+                <div style="color:#64748b; font-size:0.9rem;">
+                    Manage uploaded memorandums — review extracted rules, approve or reject
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_btn:
+            if st.button("➕  New Memorandum", type="primary", use_container_width=True, key="new_memo_btn"):
+                st.session_state["memo_sub_view"] = "upload"
+                st.rerun()
+
+        render_memo_list()
+
+
+# ---------------------------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------------------------
 
-def main():
-    st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+def render_dashboard():
+    """Original Commission Management dashboard (untouched logic)."""
 
     # ---- Header ----
     st.markdown("""
@@ -3599,6 +4697,1005 @@ def main():
     # ═══════════════════════════════════════════════════════════════════════
     with tab_analytics:
         render_performance_charts(agents)
+
+
+# ---------------------------------------------------------------------------
+# EXTRACTED RULES PAGE (wraps render_memo_library with header)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# RULE-ORIENTED EXTRACTED RULES PAGE  (replaces old memo-oriented view)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# PROJECT DASHBOARD  (POC with mock data)
+# ---------------------------------------------------------------------------
+import random as _rng
+import hashlib as _hl
+from datetime import date as _date, timedelta as _td
+
+
+def _generate_mock_projects() -> list[dict]:
+    """Generate deterministic mock project data for the POC dashboard."""
+    if "mock_projects" in st.session_state:
+        return st.session_state["mock_projects"]
+
+    _rng.seed(42)  # deterministic
+
+    _PROJECT_NAMES = [
+        "Aetas Seputeh", "Legasi Kampung Bharu", "Serai Bukit Bandaraya",
+        "Adora Trails Alam Impian", "Kalista Park Homes", "Astrea Mont Kiara",
+        "Elysium Damansara", "Verdana Prestige Cyberjaya",
+    ]
+    _AGENT_NAMES = [
+        "Ahmad Faizal", "Tan Wei Ling", "Rajesh Kumar", "Nurul Aisyah",
+        "David Lim", "Siti Aminah", "Jason Ong", "Priya Nair",
+        "Wong Kah Mun", "Mohamed Hafiz", "Lee Sook Yin", "Ravi Chandran",
+        "Farah Nabila", "Kevin Yeoh", "Amirah Zulkifli",
+    ]
+    _MEMO_TEMPLATES = [
+        "Commission Structure {q}",
+        "Sales Package & Rebate Scheme {q}",
+        "REA Commission & Referral {q}",
+        "Special Agent Bonus Program {q}",
+        "Price Adjustment & Package {q}",
+        "Early Bird Incentive {q}",
+    ]
+    _STATUSES = ["Active", "Active", "Active", "Completed", "Upcoming"]
+
+    projects: list[dict] = []
+    real_memos = _load_memo_store()
+    real_approved = [m for m in real_memos if m.get("status") == "approved"]
+
+    for i, pname in enumerate(_PROJECT_NAMES):
+        pid = f"PRJ-{i+1:03d}"
+        status = _STATUSES[i % len(_STATUSES)]
+        start = _date(2025, 1 + (i * 2) % 12, 1)
+        end = start + _td(days=_rng.randint(150, 365))
+
+        # Memos
+        n_memos = _rng.randint(3, 6)
+        memos = []
+        total_rules = 0
+        for mi in range(n_memos):
+            q = f"Q{(mi % 4) + 1} {start.year + mi // 4}"
+            n_rules = _rng.randint(8, 22)
+            total_rules += n_rules
+            memo_date = start + _td(days=mi * _rng.randint(25, 60))
+            memos.append({
+                "name": _rng.choice(_MEMO_TEMPLATES).format(q=q),
+                "effective_date": memo_date.isoformat(),
+                "rules": n_rules,
+                "status": _rng.choice(["approved", "approved", "approved", "pending"]),
+            })
+
+        # Agents for this project
+        n_agents = _rng.randint(8, 25)
+        agents_pool = _rng.sample(_AGENT_NAMES, min(n_agents, len(_AGENT_NAMES)))
+        while len(agents_pool) < n_agents:
+            agents_pool.append(f"Agent-{_rng.randint(100,999)}")
+
+        # Sales & commission
+        total_sales = _rng.randint(800_000, 8_000_000)
+        total_units = _rng.randint(40, 600)
+        avg_rate = round(_rng.uniform(2.5, 12.0), 1)
+        total_commission = int(total_sales * avg_rate / 100)
+        target_sales = int(total_sales * _rng.uniform(0.8, 1.4))
+
+        # Agent breakdown
+        agent_sales = []
+        remaining = total_sales
+        for ai, aname in enumerate(agents_pool):
+            if ai == len(agents_pool) - 1:
+                a_sales = remaining
+            else:
+                a_sales = int(remaining * _rng.uniform(0.05, 0.25))
+                remaining -= a_sales
+            a_comm = int(a_sales * avg_rate / 100)
+            a_units = max(1, int(total_units * a_sales / max(total_sales, 1)))
+            agent_sales.append({"name": aname, "sales": a_sales, "commission": a_comm, "units": a_units})
+        agent_sales.sort(key=lambda x: x["sales"], reverse=True)
+
+        # Monthly sales (last 6 months)
+        monthly = []
+        for mi in range(6):
+            m_date = _date(2025, 7 + mi, 1) if 7 + mi <= 12 else _date(2026, (7 + mi) - 12, 1)
+            m_sales = int(total_sales / 6 * _rng.uniform(0.6, 1.5))
+            monthly.append({"month": m_date.strftime("%b %Y"), "sales": m_sales})
+
+        # Health indicator
+        ratio = total_sales / max(target_sales, 1)
+        if ratio >= 0.9:
+            health = "green"
+        elif ratio >= 0.65:
+            health = "yellow"
+        else:
+            health = "red"
+
+        efficiency = round(total_sales / max(total_commission, 1), 1)
+
+        projects.append({
+            "project_id": pid,
+            "project_name": pname,
+            "status": status,
+            "start_date": start.isoformat(),
+            "end_date": end.isoformat(),
+            "description": f"Sales commission program for {pname}",
+            "memos": memos,
+            "n_memos": n_memos,
+            "total_rules": total_rules,
+            "n_agents": n_agents,
+            "agents": agent_sales,
+            "total_sales": total_sales,
+            "total_units": total_units,
+            "total_commission": total_commission,
+            "avg_rate": avg_rate,
+            "target_sales": target_sales,
+            "monthly_sales": monthly,
+            "health": health,
+            "efficiency": efficiency,
+        })
+
+    # Merge real memo data into first project
+    if real_approved and projects:
+        p0 = projects[0]
+        for rm in real_approved:
+            rc = rm.get("rule_count") or {}
+            p0["memos"].insert(0, {
+                "name": rm.get("memo_reference", "Real Memo"),
+                "effective_date": rm.get("upload_date", ""),
+                "rules": sum(rc.values()) if rc else 0,
+                "status": rm.get("status", "approved"),
+            })
+            p0["n_memos"] = len(p0["memos"])
+            p0["total_rules"] += sum(rc.values()) if rc else 0
+
+    st.session_state["mock_projects"] = projects
+    return projects
+
+
+def _health_icon(h: str) -> str:
+    return {"green": "🟢", "yellow": "🟡", "red": "🔴"}.get(h, "⚪")
+
+
+def _health_label(h: str) -> str:
+    return {"green": "Performing Well", "yellow": "Moderate", "red": "Underperforming"}.get(h, "Unknown")
+
+
+def _prj_status_cls(s: str) -> str:
+    return {"Active": "prj-status-active", "Completed": "prj-status-completed", "Upcoming": "prj-status-upcoming"}.get(s, "prj-status-active")
+
+
+def _fmt_rm(v: int | float) -> str:
+    return f"RM {v:,.0f}"
+
+
+def render_projects_page():
+    """Project Overview Dashboard with mock data."""
+    st.markdown(MEMO_CSS, unsafe_allow_html=True)
+
+    projects = _generate_mock_projects()
+
+    # == HEADER ==
+    hc1, hc2 = st.columns([3, 1])
+    with hc1:
+        st.markdown("""
+        <div style="margin-bottom:0.25rem;">
+            <div style="font-size:1.8rem; font-weight:800; color:#0f172a;">Projects</div>
+            <div style="color:#64748b; font-size:0.9rem;">Overview of sales programs, memos, and commission performance</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with hc2:
+        st.markdown("<div style='padding-top:0.6rem;'></div>", unsafe_allow_html=True)
+        add_btn = st.button("➕ New Project", type="primary", key="prj_add_btn")
+
+    # ── New Project form ──
+    if add_btn:
+        st.session_state["prj_show_form"] = True
+
+    if st.session_state.get("prj_show_form", False):
+        st.markdown("---")
+        st.markdown("### Create New Project")
+        with st.form("new_project_form", clear_on_submit=True):
+            fc1, fc2 = st.columns(2)
+            with fc1:
+                new_name = st.text_input("Project Name *")
+                new_desc = st.text_area("Description", height=80)
+                new_status = st.selectbox("Status", ["Active", "Upcoming", "Completed"])
+            with fc2:
+                new_start = st.date_input("Start Date", value=_date.today())
+                new_end = st.date_input("End Date", value=_date.today() + _td(days=180))
+                new_target = st.number_input("Target Sales (RM)", min_value=0, value=1_000_000, step=100_000)
+            submitted = st.form_submit_button("🚀 Create Project", type="primary")
+            cancel = st.form_submit_button("Cancel")
+            if submitted and new_name:
+                # Generate a new mock project
+                _rng.seed(None)  # random for new projects
+                pid = f"PRJ-{len(projects)+1:03d}"
+                n_agents = _rng.randint(5, 15)
+                projects.append({
+                    "project_id": pid,
+                    "project_name": new_name,
+                    "status": new_status,
+                    "start_date": new_start.isoformat(),
+                    "end_date": new_end.isoformat(),
+                    "description": new_desc or f"Sales commission program for {new_name}",
+                    "memos": [
+                        {"name": f"Initial Commission Structure Q1 {new_start.year}", "effective_date": new_start.isoformat(), "rules": _rng.randint(8, 16), "status": "approved"},
+                        {"name": f"Sales Package & Rebate {new_start.year}", "effective_date": (new_start + _td(days=30)).isoformat(), "rules": _rng.randint(6, 12), "status": "pending"},
+                    ],
+                    "n_memos": 2,
+                    "total_rules": 0,
+                    "n_agents": n_agents,
+                    "agents": [{"name": f"Agent-{_rng.randint(100,999)}", "sales": _rng.randint(50000, 300000), "commission": _rng.randint(2000, 30000), "units": _rng.randint(2, 30)} for _ in range(min(5, n_agents))],
+                    "total_sales": int(new_target * _rng.uniform(0.1, 0.4)),
+                    "total_units": _rng.randint(10, 80),
+                    "total_commission": 0,
+                    "avg_rate": round(_rng.uniform(3, 8), 1),
+                    "target_sales": new_target,
+                    "monthly_sales": [{"month": "Jan 2026", "sales": _rng.randint(50000, 300000)}],
+                    "health": "yellow",
+                    "efficiency": 0,
+                })
+                projects[-1]["total_rules"] = sum(m["rules"] for m in projects[-1]["memos"])
+                projects[-1]["total_commission"] = int(projects[-1]["total_sales"] * projects[-1]["avg_rate"] / 100)
+                projects[-1]["efficiency"] = round(projects[-1]["total_sales"] / max(projects[-1]["total_commission"], 1), 1)
+                st.session_state["mock_projects"] = projects
+                st.session_state["prj_show_form"] = False
+                st.rerun()
+            if cancel:
+                st.session_state["prj_show_form"] = False
+                st.rerun()
+
+    # == GLOBAL KPIs ==
+    st.markdown("<div style='margin-top:0.75rem;'></div>", unsafe_allow_html=True)
+    tot_projects = len(projects)
+    tot_memos = sum(p["n_memos"] for p in projects)
+    tot_sales = sum(p["total_sales"] for p in projects)
+    tot_comm = sum(p["total_commission"] for p in projects)
+    tot_agents = sum(p["n_agents"] for p in projects)
+
+    k1, k2, k3, k4, k5 = st.columns(5)
+    for col, label, val, color in [
+        (k1, "Total Projects", str(tot_projects), "#0f172a"),
+        (k2, "Active Memos", str(tot_memos), "#2563eb"),
+        (k3, "Total Sales", _fmt_rm(tot_sales), "#16a34a"),
+        (k4, "Total Commission", _fmt_rm(tot_comm), "#d97706"),
+        (k5, "Active Agents", str(tot_agents), "#7c3aed"),
+    ]:
+        col.markdown(f"""
+        <div class="memo-kpi-card">
+            <div class="memo-kpi-value" style="color:{color};">{val}</div>
+            <div class="memo-kpi-label">{label}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # == FILTERS ==
+    st.markdown("---")
+    f1, f2, f3, f4 = st.columns([2, 1, 1, 1])
+    with f1:
+        search_q = st.text_input("🔍 Search Projects", placeholder="Project name or ID…", key="prj_search")
+    with f2:
+        filt_status = st.selectbox("Status", ["All", "Active", "Completed", "Upcoming"], key="prj_filt_status")
+    with f3:
+        sort_by = st.selectbox("Sort by", ["Name", "Sales ↓", "Commission ↓", "Agents ↓", "Health"], key="prj_sort")
+    with f4:
+        filt_health = st.selectbox("Health", ["All", "🟢 Performing", "🟡 Moderate", "🔴 Underperforming"], key="prj_filt_health")
+
+    filtered = list(projects)
+    if search_q:
+        q = search_q.lower()
+        filtered = [p for p in filtered if q in p["project_name"].lower() or q in p["project_id"].lower()]
+    if filt_status != "All":
+        filtered = [p for p in filtered if p["status"] == filt_status]
+    if filt_health != "All":
+        h_map = {"🟢 Performing": "green", "🟡 Moderate": "yellow", "🔴 Underperforming": "red"}
+        filtered = [p for p in filtered if p["health"] == h_map.get(filt_health, "")]
+
+    if sort_by == "Sales ↓":
+        filtered.sort(key=lambda p: p["total_sales"], reverse=True)
+    elif sort_by == "Commission ↓":
+        filtered.sort(key=lambda p: p["total_commission"], reverse=True)
+    elif sort_by == "Agents ↓":
+        filtered.sort(key=lambda p: p["n_agents"], reverse=True)
+    elif sort_by == "Health":
+        order = {"red": 0, "yellow": 1, "green": 2}
+        filtered.sort(key=lambda p: order.get(p["health"], 1))
+    else:
+        filtered.sort(key=lambda p: p["project_name"])
+
+    st.markdown(f"<div style='color:#64748b;font-size:0.85rem;margin-bottom:0.75rem;'>Showing <strong>{len(filtered)}</strong> of {len(projects)} projects</div>", unsafe_allow_html=True)
+
+    # == PROJECT CARDS ==
+    if not filtered:
+        st.info("No projects match the current filters.")
+        return
+
+    for pi, p in enumerate(filtered):
+        pid = p["project_id"]
+        pname = p["project_name"]
+        status = p["status"]
+        health = p["health"]
+
+        st.markdown(f"""
+        <div class="prj-card">
+            <div class="prj-card-header">
+                <div>
+                    <div class="prj-name">{pname}</div>
+                    <div class="prj-id">{pid} · {p['start_date']} → {p['end_date']}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <span class="prj-health-{health}" style="font-size:0.78rem;font-weight:600;">{_health_icon(health)} {_health_label(health)}</span>
+                    <span class="{_prj_status_cls(status)}">{status}</span>
+                </div>
+            </div>
+            <div class="prj-metrics">
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Memos</div>
+                    <div class="prj-metric-value">{p['n_memos']}</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Active Rules</div>
+                    <div class="prj-metric-value">{p['total_rules']}</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Total Sales</div>
+                    <div class="prj-metric-value">{_fmt_rm(p['total_sales'])}</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Units Sold</div>
+                    <div class="prj-metric-value">{p['total_units']:,}</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Commission Paid</div>
+                    <div class="prj-metric-value">{_fmt_rm(p['total_commission'])}</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Avg Rate</div>
+                    <div class="prj-metric-value">{p['avg_rate']}%</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Agents</div>
+                    <div class="prj-metric-value">{p['n_agents']}</div>
+                </div>
+                <div class="prj-metric">
+                    <div class="prj-metric-label">Efficiency</div>
+                    <div class="prj-metric-value">{p['efficiency']}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # ── Expandable Details ──
+        with st.expander(f"📂 View Details — {pname}", expanded=False):
+            # -- Quick Actions --
+            ac1, ac2, ac3, ac4 = st.columns(4)
+            with ac1:
+                if st.button("📝 View Memos", key=f"prj_memos_{pi}"):
+                    st.session_state["nav_page"] = "  Memorandums"
+                    st.rerun()
+            with ac2:
+                if st.button("📖 View Rules", key=f"prj_rules_{pi}"):
+                    st.session_state["nav_page"] = "📚  Extracted Rules"
+                    st.rerun()
+            with ac3:
+                if st.button("💰 Analyze Commission", key=f"prj_comm_{pi}"):
+                    st.session_state["nav_page"] = "💰  Agent Commissions"
+                    st.rerun()
+            with ac4:
+                st.markdown(f"<div style='padding-top:0.4rem;font-size:0.82rem;color:#64748b;'>Target: {_fmt_rm(p['target_sales'])}</div>", unsafe_allow_html=True)
+
+            # -- Memo List --
+            st.markdown("#### 📝 Memo List")
+            memo_rows = []
+            for m in p["memos"]:
+                s_badge = "🟢" if m["status"] == "approved" else "🟡"
+                memo_rows.append({
+                    "Memo": m["name"],
+                    "Effective Date": m["effective_date"],
+                    "Rules": m["rules"],
+                    "Status": f"{s_badge} {m['status'].title()}",
+                })
+            st.table(memo_rows)
+
+            # -- Sales Performance --
+            det1, det2 = st.columns(2)
+
+            with det1:
+                st.markdown("#### 📈 Monthly Sales")
+                chart_data = {m["month"]: m["sales"] for m in p["monthly_sales"]}
+                st.bar_chart(chart_data, height=220)
+
+            with det2:
+                st.markdown("#### 🏆 Top 5 Agents by Sales")
+                top5 = p["agents"][:5]
+                agent_rows = []
+                for rank, a in enumerate(top5, 1):
+                    agent_rows.append({
+                        "#": rank,
+                        "Agent": a["name"],
+                        "Sales": _fmt_rm(a["sales"]),
+                        "Commission": _fmt_rm(a["commission"]),
+                        "Units": a["units"],
+                    })
+                st.table(agent_rows)
+
+            # -- Commission Distribution --
+            st.markdown("#### 📊 Commission Summary")
+            cs1, cs2, cs3, cs4 = st.columns(4)
+            cs1.metric("Total Commission", _fmt_rm(p["total_commission"]))
+            cs2.metric("Average Rate", f"{p['avg_rate']}%")
+            highest_comm = max((a["commission"] for a in p["agents"]), default=0)
+            cs3.metric("Highest Agent Commission", _fmt_rm(highest_comm))
+            cs4.metric("Efficiency Score", p["efficiency"])
+
+
+
+def _aggregate_all_rules() -> list[dict]:
+    """Load all memos from memo_store and flatten every rule into a single list.
+
+    Each item is a dict with:
+        rule_id, rule_name, rule_type, category_key, conditions, notes,
+        memo_id, memo_reference, project_name, effective_period,
+        extraction_confidence, memo_status, image_files, rate_value,
+        rate_type, calculation_method, status (Active/Flagged/Invalid)
+    """
+    memos = _load_memo_store()
+    all_rules: list[dict] = []
+    flagged_store = st.session_state.get("flagged_rules", {})
+
+    for memo in memos:
+        # Only include rules from approved memos
+        if memo.get("status") != "approved":
+            continue
+        rules_data = _load_memo_rules(memo.get("rules_file"))
+        if not rules_data or "rules" not in rules_data:
+            continue
+
+        for cat_key, (icon, cat_title) in _MEMO_SECTION_META.items():
+            items = rules_data["rules"].get(cat_key, [])
+            for rule in items:
+                rid = rule.get("rule_id", "")
+
+                # Determine rate value / type
+                rate_val = ""
+                rate_type = "Conditional"
+                calc_method = ""
+                conds = rule.get("conditions", [])
+                if conds and isinstance(conds[0], dict):
+                    first = conds[0]
+                    for pct_key in ("commission_percentage", "rebate_percentage"):
+                        if pct_key in first:
+                            rate_val = f"{first[pct_key]}%"
+                            rate_type = "Percentage"
+                            break
+                    if not rate_val and "adjustment_amount" in first:
+                        try:
+                            rate_val = f"RM {float(first['adjustment_amount']):,.0f}"
+                        except (ValueError, TypeError):
+                            rate_val = str(first['adjustment_amount'])
+                        rate_type = "Fixed"
+                    calc_method = first.get("description", "")
+                elif conds and isinstance(conds[0], str):
+                    calc_method = conds[0] if conds else ""
+
+                # Referral rules special handling
+                if "reward_amount" in rule:
+                    try:
+                        amt = float(rule["reward_amount"])
+                    except (ValueError, TypeError):
+                        amt = 0
+                    rtype = rule.get("reward_type", "fixed")
+                    rate_type = rtype.title()
+                    rate_val = f"RM {amt:,.0f}" if rtype == "fixed" else f"{amt}%"
+                    calc_method = rule.get("referrer_category", "").replace("_", " ").title()
+
+                # Package rules special handling
+                if "value" in rule and cat_key == "package_rules":
+                    rate_val = str(rule["value"])
+                    rate_type = "Package"
+                    calc_method = rule.get("package_type", "").replace("_", " ").title()
+
+                # Multi-tier detection
+                if conds and isinstance(conds[0], dict) and len(conds) > 1:
+                    rate_type = "Tiered"
+                    vals = []
+                    for c in conds:
+                        for k in ("commission_percentage", "rebate_percentage", "adjustment_amount"):
+                            if k in c:
+                                vals.append(str(c[k]))
+                    if vals:
+                        try:
+                            fvals = [float(v) for v in vals]
+                            rate_val = f"{min(fvals)}–{max(fvals)}"
+                            if any("percentage" in str(c) for c in conds):
+                                rate_val += "%"
+                        except (ValueError, TypeError):
+                            rate_val = " / ".join(vals)
+
+                # Determine status
+                flag_info = flagged_store.get(rid)
+                if flag_info:
+                    status = "Flagged"
+                else:
+                    status = "Active"
+
+                all_rules.append({
+                    "rule_id": rid,
+                    "rule_name": rule.get("rule_name", "Untitled"),
+                    "rule_type": cat_title.replace(" Rules", "").replace(" Adjustments", " Adj."),
+                    "category_key": cat_key,
+                    "icon": icon,
+                    "conditions": conds,
+                    "notes": rule.get("notes", []),
+                    "raw_rule": rule,
+                    # Memo context
+                    "memo_id": memo["memo_id"],
+                    "memo_reference": memo.get("memo_reference", ""),
+                    "project_name": memo.get("project_name", ""),
+                    "effective_period": memo.get("effective_period", {}),
+                    "extraction_confidence": memo.get("extraction_confidence") or rules_data.get("extraction_confidence"),
+                    "memo_status": memo.get("status", ""),
+                    "image_files": memo.get("image_files", []),
+                    # Computed
+                    "rate_value": rate_val,
+                    "rate_type": rate_type,
+                    "calculation_method": calc_method,
+                    "status": status,
+                })
+
+    return all_rules
+
+
+def _validate_rule(rule: dict) -> list[dict]:
+    """Run validation checks on a single rule.  Returns list of {level, message}."""
+    issues: list[dict] = []
+    conds = rule.get("conditions", [])
+
+    # Missing fields
+    if not rule.get("rule_name"):
+        issues.append({"level": "error", "message": "Missing rule name"})
+    if not rule.get("rule_id"):
+        issues.append({"level": "error", "message": "Missing rule ID"})
+    if not conds:
+        issues.append({"level": "warning", "message": "No conditions defined"})
+
+    # Rate value check
+    if not rule.get("rate_value"):
+        issues.append({"level": "warning", "message": "Rate value could not be determined"})
+
+    # Condition quality
+    if conds and isinstance(conds[0], dict):
+        for c in conds:
+            cond_str = c.get("condition", "")
+            if not cond_str:
+                issues.append({"level": "error", "message": "Empty condition expression"})
+            if "_ _" in cond_str or "__" in cond_str:
+                issues.append({"level": "warning", "message": f"Possible OCR artefact in condition: {cond_str[:60]}"})
+
+    # Extraction confidence
+    conf = rule.get("extraction_confidence")
+    if conf is not None:
+        if conf < 0.6:
+            issues.append({"level": "error", "message": f"Low extraction confidence ({conf:.0%})"})
+        elif conf < 0.8:
+            issues.append({"level": "warning", "message": f"Moderate extraction confidence ({conf:.0%})"})
+
+    # Effective period
+    ep = rule.get("effective_period", {})
+    if not ep.get("start_date") or not ep.get("end_date"):
+        issues.append({"level": "warning", "message": "Effective period incomplete"})
+
+    if not issues:
+        issues.append({"level": "success", "message": "All checks passed — rule is valid"})
+
+    return issues
+
+
+def _render_rule_card(rule: dict, idx: int):
+    """Render a single rule as a styled card with expandable details."""
+    rid = rule["rule_id"]
+    rname = rule["rule_name"]
+    rtype = rule["rule_type"]
+    icon = rule["icon"]
+    status = rule["status"]
+    memo_ref = rule["memo_reference"]
+    project = rule["project_name"]
+    rate_val = rule["rate_value"] or "—"
+    rate_type = rule["rate_type"]
+    calc_method = rule["calculation_method"] or "—"
+    conf = rule.get("extraction_confidence")
+
+    # Status badge
+    badge_cls = {"Active": "rule-badge-active", "Flagged": "rule-badge-flagged", "Invalid": "rule-badge-invalid"}.get(status, "rule-badge-active")
+    card_extra = " rule-card-flagged" if status == "Flagged" else (" rule-card-invalid" if status == "Invalid" else "")
+
+    # Validation status badge
+    v_status = st.session_state.get("rule_validation_status", {}).get(rid, "Pending")
+    v_badge_cls = {"Validated": "vbadge-validated", "Not Validated": "vbadge-not-validated", "Pending": "vbadge-pending"}.get(v_status, "vbadge-pending")
+    v_icon = {"Validated": "✓", "Not Validated": "✗", "Pending": "◌"}.get(v_status, "◌")
+
+    # Confidence color
+    conf_pct = int((conf or 0) * 100)
+    conf_color = "#059669" if conf_pct >= 80 else ("#d97706" if conf_pct >= 60 else "#dc2626")
+
+    # Card header HTML
+    st.markdown(f"""
+    <div class="rule-card{card_extra}">
+        <div class="rule-card-header">
+            <div style="display:flex;align-items:center;">
+                <div class="rule-card-icon">{icon}</div>
+                <div>
+                    <div class="rule-card-title">{rname}</div>
+                    <div class="rule-card-subtitle">{rid} · from {memo_ref}</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.3rem;">
+                <span class="{v_badge_cls}">{v_icon} {v_status}</span>
+                <span class="{badge_cls}">{status}</span>
+            </div>
+        </div>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <div class="rule-info-block">
+                <div class="rule-info-label">Calculation Method</div>
+                <div class="rule-info-value">{calc_method}</div>
+            </div>
+            <div class="rule-info-block">
+                <div class="rule-info-label">Rate Type</div>
+                <div class="rule-info-value"><span style="background:#e0f2fe;color:#0369a1;padding:0.15rem 0.5rem;border-radius:12px;font-size:0.78rem;font-weight:600;">{rate_type}</span></div>
+            </div>
+            <div class="rule-info-block">
+                <div class="rule-info-label">Rate Value</div>
+                <div class="rule-info-value">{rate_val}</div>
+            </div>
+            <div class="rule-info-block">
+                <div class="rule-info-label">Category</div>
+                <div class="rule-info-value">{rtype}</div>
+            </div>
+        </div>
+        <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.75rem;color:#64748b;">Extraction confidence: {conf_pct}%</span>
+            <div class="rule-confidence-bar" style="flex:1;max-width:200px;">
+                <div class="rule-confidence-fill" style="width:{conf_pct}%;background:{conf_color};"></div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Expandable details
+    with st.expander(f"📋 Details — {rid}", expanded=False):
+        # ---- Conditions ----
+        st.markdown("**Rule Conditions**")
+        conds = rule["conditions"]
+        if conds and isinstance(conds[0], dict):
+            rows = []
+            for c in conds:
+                val = c.get("commission_percentage",
+                      c.get("rebate_percentage",
+                      c.get("adjustment_amount", "")))
+                rows.append({
+                    "Condition": c.get("condition", ""),
+                    "Value": str(val),
+                    "Description": c.get("description", ""),
+                })
+            st.table(rows)
+        elif conds:
+            for c in conds:
+                st.markdown(f"- {c}")
+        else:
+            st.info("No conditions defined.")
+
+        # Notes
+        notes = rule.get("notes", [])
+        if notes:
+            st.markdown("**Notes:** " + " · ".join(notes))
+
+        # ---- Source Information ----
+        st.markdown("---")
+        st.markdown("**Source Information**")
+        ep = rule.get("effective_period", {})
+        sc1, sc2, sc3 = st.columns(3)
+        sc1.markdown(f"**Memo:** {memo_ref}")
+        sc2.markdown(f"**Effective:** {ep.get('start_date', '—')} → {ep.get('end_date', '—')}")
+        sc3.markdown(f"**Project:** {project}")
+
+        # ---- Document Verification ----
+        st.markdown("---")
+        st.markdown("**Document Verification**")
+        img_files = rule.get("image_files", [])
+        if img_files:
+            if st.button("📄 View Original Memo", key=f"view_memo_{rid}_{idx}"):
+                st.session_state[f"show_memo_{rid}"] = not st.session_state.get(f"show_memo_{rid}", False)
+
+            if st.session_state.get(f"show_memo_{rid}", False):
+                paths = _get_memo_images(img_files)
+                if paths:
+                    memo_container = st.container(height=400)
+                    with memo_container:
+                        for pi, p in enumerate(paths):
+                            st.caption(f"Page {pi+1} of {len(paths)}")
+                            st.image(str(p), use_container_width=True)
+                else:
+                    st.warning("Original memo images not found.")
+        else:
+            st.info("No memo images available for verification.")
+
+        # ---- Validation ----
+        st.markdown("---")
+        current_v_status = st.session_state.get("rule_validation_status", {}).get(rid, "Pending")
+        act1, act2, act3, act4 = st.columns([1, 1, 1, 1])
+        with act1:
+            if st.button("✅ Validate Rule", key=f"validate_{rid}_{idx}"):
+                issues = _validate_rule(rule)
+                st.session_state[f"validation_{rid}"] = issues
+                # Auto-set validation status based on results
+                has_error = any(i["level"] == "error" for i in issues)
+                vs = st.session_state.get("rule_validation_status", {})
+                vs[rid] = "Not Validated" if has_error else "Validated"
+                st.session_state["rule_validation_status"] = vs
+                st.rerun()
+
+        with act2:
+            flag_info = st.session_state.get("flagged_rules", {}).get(rid)
+            if flag_info:
+                if st.button("🔓 Unflag Rule", key=f"unflag_{rid}_{idx}"):
+                    flagged = st.session_state.get("flagged_rules", {})
+                    flagged.pop(rid, None)
+                    st.session_state["flagged_rules"] = flagged
+                    st.rerun()
+            else:
+                if st.button("🚩 Flag Rule", key=f"flag_{rid}_{idx}"):
+                    st.session_state[f"show_flag_form_{rid}"] = True
+
+        with act4:
+            if current_v_status != "Pending":
+                if st.button("↩ Reset Validation", key=f"reset_val_{rid}_{idx}"):
+                    vs = st.session_state.get("rule_validation_status", {})
+                    vs[rid] = "Pending"
+                    st.session_state["rule_validation_status"] = vs
+                    st.session_state.pop(f"validation_{rid}", None)
+                    st.rerun()
+
+        # Flag form
+        if st.session_state.get(f"show_flag_form_{rid}", False):
+            st.markdown("**Select reason for flagging:**")
+            reason = st.selectbox("Reason", [
+                "Incorrect extraction",
+                "Missing condition",
+                "Wrong rate value",
+                "Ambiguous rule",
+                "Other",
+            ], key=f"flag_reason_{rid}_{idx}")
+            flag_note = st.text_input("Additional note (optional)", key=f"flag_note_{rid}_{idx}")
+            if st.button("Submit Flag", key=f"submit_flag_{rid}_{idx}", type="primary"):
+                flagged = st.session_state.get("flagged_rules", {})
+                flagged[rid] = {"reason": reason, "note": flag_note}
+                st.session_state["flagged_rules"] = flagged
+                st.session_state.pop(f"show_flag_form_{rid}", None)
+                st.success(f"Rule {rid} flagged: {reason}")
+                st.rerun()
+
+        # Show validation results
+        val_results = st.session_state.get(f"validation_{rid}")
+        if val_results:
+            st.markdown("**Validation Results:**")
+            for v in val_results:
+                if v["level"] == "success":
+                    st.success(f"✔ {v['message']}")
+                elif v["level"] == "warning":
+                    st.warning(f"⚠ {v['message']}")
+                else:
+                    st.error(f"✖ {v['message']}")
+
+        # Flag info display
+        flag_info = st.session_state.get("flagged_rules", {}).get(rid)
+        if flag_info:
+            st.warning(f"🚩 **Flagged** — {flag_info['reason']}" + (f" ({flag_info['note']})" if flag_info.get('note') else ""))
+
+
+def render_extracted_rules_page():
+    """Rule-oriented Extracted Rules page with filters, cards, validation & flagging."""
+    st.markdown(MEMO_CSS, unsafe_allow_html=True)
+
+    # ---- Header ----
+    st.markdown("""
+    <div style="margin-bottom:0.25rem;">
+        <div style="font-size:1.8rem; font-weight:800; color:#0f172a;">Extracted Rules</div>
+        <div style="color:#64748b; font-size:0.9rem;">Commission calculation rules extracted from approved memorandums</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---- Init session state ----
+    if "flagged_rules" not in st.session_state:
+        st.session_state["flagged_rules"] = {}
+    if "rule_validation_status" not in st.session_state:
+        st.session_state["rule_validation_status"] = {}
+
+    # ---- Aggregate rules ----
+    all_rules = _aggregate_all_rules()
+
+    if not all_rules:
+        st.info("No rules have been extracted yet. Upload and approve memos first.")
+        return
+
+    # ---- Filter Panel ----
+    st.markdown("<div style='margin-top:0.75rem;'></div>", unsafe_allow_html=True)
+    fc1, fc2, fc3, fc4, fc5, fc6 = st.columns([1.1, 1.1, 1, 1, 1, 1.3])
+
+    projects = sorted(set(r["project_name"] for r in all_rules if r["project_name"]))
+    memos_refs = sorted(set(r["memo_reference"] for r in all_rules if r["memo_reference"]))
+    rule_types = sorted(set(r["rule_type"] for r in all_rules))
+
+    with fc1:
+        sel_project = st.selectbox("Project", ["All"] + projects, key="rules_filter_project")
+    with fc2:
+        sel_memo = st.selectbox("Memo", ["All"] + memos_refs, key="rules_filter_memo")
+    with fc3:
+        sel_type = st.selectbox("Rule Type", ["All"] + rule_types, key="rules_filter_type")
+    with fc4:
+        sel_status = st.selectbox("Status", ["All", "Active", "Flagged"], key="rules_filter_status")
+    with fc5:
+        sel_validation = st.selectbox("Validation", ["All", "Validated", "Flagged", "Pending"], key="rules_filter_validation")
+    with fc6:
+        search_q = st.text_input("🔍 Search", placeholder="Rule ID or keyword…", key="rules_search")
+
+    # ---- Apply Filters ----
+    filtered = all_rules
+    if sel_project != "All":
+        filtered = [r for r in filtered if r["project_name"] == sel_project]
+    if sel_memo != "All":
+        filtered = [r for r in filtered if r["memo_reference"] == sel_memo]
+    if sel_type != "All":
+        filtered = [r for r in filtered if r["rule_type"] == sel_type]
+    if sel_status != "All":
+        filtered = [r for r in filtered if r["status"] == sel_status]
+    if sel_validation != "All":
+        v_store = st.session_state.get("rule_validation_status", {})
+        flagged_store = st.session_state.get("flagged_rules", {})
+        if sel_validation == "Flagged":
+            filtered = [r for r in filtered if r["rule_id"] in flagged_store]
+        else:
+            filtered = [r for r in filtered if v_store.get(r["rule_id"], "Pending") == sel_validation and r["rule_id"] not in flagged_store]
+    if search_q:
+        q = search_q.lower()
+        filtered = [r for r in filtered if q in r["rule_id"].lower() or q in r["rule_name"].lower() or q in r.get("calculation_method", "").lower()]
+
+    # ---- Sort ----
+    sort_col, count_col = st.columns([2, 3])
+    with sort_col:
+        sort_by = st.selectbox("Sort by", ["Rule ID", "Rule Type", "Memo", "Confidence"], key="rules_sort")
+    with count_col:
+        st.markdown(f"<div style='padding-top:1.6rem;color:#64748b;font-size:0.85rem;'>Showing <strong>{len(filtered)}</strong> of {len(all_rules)} rules</div>", unsafe_allow_html=True)
+
+    if sort_by == "Rule ID":
+        filtered.sort(key=lambda r: r["rule_id"])
+    elif sort_by == "Rule Type":
+        filtered.sort(key=lambda r: r["rule_type"])
+    elif sort_by == "Memo":
+        filtered.sort(key=lambda r: r["memo_reference"])
+    elif sort_by == "Confidence":
+        filtered.sort(key=lambda r: r.get("extraction_confidence") or 0, reverse=True)
+
+    st.markdown("---")
+
+    # ---- KPI Strip ----
+    k1, k2, k3, k4, k5, k6 = st.columns(6)
+    total = len(all_rules)
+    total_active = sum(1 for r in all_rules if r["status"] == "Active")
+    total_flagged = sum(1 for r in all_rules if r["status"] == "Flagged")
+    v_store = st.session_state.get("rule_validation_status", {})
+    total_validated = sum(1 for r in all_rules if v_store.get(r["rule_id"], "Pending") == "Validated")
+    avg_conf = sum((r.get("extraction_confidence") or 0) for r in all_rules) / max(total, 1)
+    n_memos = len(set(r["memo_reference"] for r in all_rules))
+
+    for col, label, value, color in [
+        (k1, "Total Rules", str(total), "#0f172a"),
+        (k2, "Active", str(total_active), "#16a34a"),
+        (k3, "Flagged", str(total_flagged), "#d97706"),
+        (k4, "Validated", str(total_validated), "#059669"),
+        (k5, "Avg Confidence", f"{avg_conf:.0%}", "#2563eb"),
+        (k6, "Source Memos", str(n_memos), "#7c3aed"),
+    ]:
+        col.markdown(f"""
+        <div class="memo-kpi-card">
+            <div class="memo-kpi-value" style="color:{color};">{value}</div>
+            <div class="memo-kpi-label">{label}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-top:1rem;'></div>", unsafe_allow_html=True)
+
+    # ---- Rule Cards ----
+    if not filtered:
+        st.info("No rules match the current filters.")
+        return
+
+    # Pagination
+    PAGE_SIZE = 10
+    total_pages = max(1, (len(filtered) + PAGE_SIZE - 1) // PAGE_SIZE)
+    if "rules_page" not in st.session_state:
+        st.session_state["rules_page"] = 1
+    current_page = st.session_state["rules_page"]
+    current_page = min(current_page, total_pages)
+    start_idx = (current_page - 1) * PAGE_SIZE
+    page_rules = filtered[start_idx : start_idx + PAGE_SIZE]
+
+    for i, rule in enumerate(page_rules):
+        _render_rule_card(rule, start_idx + i)
+
+    # Pagination controls
+    if total_pages > 1:
+        st.markdown("---")
+        pcol1, pcol2, pcol3 = st.columns([1, 2, 1])
+        with pcol1:
+            if st.button("← Previous", disabled=current_page <= 1, key="rules_prev"):
+                st.session_state["rules_page"] = current_page - 1
+                st.rerun()
+        with pcol2:
+            st.markdown(f"<div style='text-align:center;padding-top:0.5rem;color:#64748b;'>Page {current_page} of {total_pages}</div>", unsafe_allow_html=True)
+        with pcol3:
+            if st.button("Next →", disabled=current_page >= total_pages, key="rules_next"):
+                st.session_state["rules_page"] = current_page + 1
+                st.rerun()
+
+
+# ---------------------------------------------------------------------------
+# MAIN — Sidebar Navigation Router
+# ---------------------------------------------------------------------------
+
+def main():
+    st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+
+    # ── Sidebar Navigation ──
+    with st.sidebar:
+        st.markdown("""
+        <div style="text-align:center; padding:1rem 0 0.5rem 0;">
+            <div style="font-size:1.4rem; font-weight:800; color:#0f172a;">AVALAND</div>
+            <div style="font-size:0.72rem; color:#94a3b8; letter-spacing:1px;">PROPERTY GROUP</div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown("---")
+
+        nav_options = [
+            "📊  Projects",
+            "  Memorandums",
+            "📚  Extracted Rules",
+            "💰  Agent Commissions",
+        ]
+
+        # Preserve navigation across reruns
+        if "nav_page" not in st.session_state:
+            st.session_state["nav_page"] = nav_options[0]
+
+        selected = st.radio(
+            "Navigation",
+            nav_options,
+            index=nav_options.index(st.session_state["nav_page"]) if st.session_state["nav_page"] in nav_options else 0,
+            label_visibility="collapsed",
+            key="nav_radio",
+        )
+        st.session_state["nav_page"] = selected
+
+        st.markdown("---")
+        st.markdown(
+            '<div style="font-size:0.72rem;color:#94a3b8;text-align:center;padding:0.5rem 0;">'
+            'Avaland Commission Suite v1.0'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+
+    # ── Page Router ──
+    if selected == "📊  Projects":
+        render_projects_page()
+
+    elif selected == "  Memorandums":
+        render_memorandums_page()
+
+    elif selected == "📚  Extracted Rules":
+        render_extracted_rules_page()
+
+    elif selected == "💰  Agent Commissions":
+        render_dashboard()
 
 
 if __name__ == "__main__":

@@ -2207,6 +2207,20 @@ button[data-testid="stBaseButton-primary"]:hover span,
 .flag-form-icon {
     font-size: 1.1rem;
 }
+/* Inputs inside flag form — visible borders */
+.flag-form-container [data-testid="stTextInput"] input,
+.flag-form-container [data-baseweb="input"] input,
+.flag-form-container [data-baseweb="select"],
+.flag-form-container [data-testid="stSelectbox"] > div > div {
+    border: 1.5px solid #e2e0ef !important;
+    border-radius: 8px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.flag-form-container [data-testid="stTextInput"] input:focus,
+.flag-form-container [data-baseweb="input"] input:focus {
+    border-color: #818cf8 !important;
+    box-shadow: 0 0 0 3px rgba(129,140,248,0.15) !important;
+}
 /* 1) The header container that holds the collapse button (Streamlit 1.53+) */
 [data-testid="stSidebarHeader"] {
     display: none !important;
@@ -4307,10 +4321,10 @@ MEMO_CSS = """
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2px;
 }
 
-/* Project metrics grid — fixed 4-col for balanced rows */
+/* Project metrics grid — fixed 3-col for balanced rows */
 .prj-metrics {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.6rem 0.75rem;
     margin-top: 0.25rem;
 }
@@ -4343,9 +4357,7 @@ MEMO_CSS = """
 .prj-metric:nth-child(3) { --accent: #10B981; }
 .prj-metric:nth-child(4) { --accent: #0EA5E9; }
 .prj-metric:nth-child(5) { --accent: #F59E0B; }
-.prj-metric:nth-child(6) { --accent: #EC4899; }
-.prj-metric:nth-child(7) { --accent: #14B8A6; }
-.prj-metric:nth-child(8) { --accent: #6366F1; }
+.prj-metric:nth-child(6) { --accent: #14B8A6; }
 .prj-metric-label {
     font-size: 0.62rem; color: #94a3b8; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.6px;
@@ -5760,10 +5772,6 @@ def render_projects_page():
         status = p["status"]
         health = p["health"]
 
-        # Build efficiency display with color
-        eff_val = p['efficiency']
-        eff_color = '#16A34A' if eff_val >= 15 else ('#D97706' if eff_val >= 8 else '#DC2626')
-
         st.markdown(f"""
         <div class="prj-card">
             <div class="prj-card-header">
@@ -5798,16 +5806,8 @@ def render_projects_page():
                     <div class="prj-metric-value">{_fmt_rm(p['total_commission'])}</div>
                 </div>
                 <div class="prj-metric">
-                    <div class="prj-metric-label">Avg Rate</div>
-                    <div class="prj-metric-value">{p['avg_rate']}%</div>
-                </div>
-                <div class="prj-metric">
                     <div class="prj-metric-label">Agents</div>
                     <div class="prj-metric-value">{p['n_agents']}</div>
-                </div>
-                <div class="prj-metric">
-                    <div class="prj-metric-label">Efficiency</div>
-                    <div class="prj-metric-value" style="color:{eff_color}">{eff_val}</div>
                 </div>
             </div>
         </div>
@@ -5869,12 +5869,11 @@ def render_projects_page():
 
             # -- Commission Distribution --
             st.markdown("#### 📊 Commission Summary")
-            cs1, cs2, cs3, cs4 = st.columns(4)
+            cs1, cs2, cs3 = st.columns(3)
             cs1.metric("Total Commission", _fmt_rm(p["total_commission"]))
-            cs2.metric("Average Rate", f"{p['avg_rate']}%")
             highest_comm = max((a["commission"] for a in p["agents"]), default=0)
-            cs3.metric("Highest Agent Commission", _fmt_rm(highest_comm))
-            cs4.metric("Efficiency Score", p["efficiency"])
+            cs2.metric("Highest Agent Commission", _fmt_rm(highest_comm))
+            cs3.metric("Total Agents", p["n_agents"])
 
 
 

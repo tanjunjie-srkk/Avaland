@@ -375,8 +375,34 @@ def export_csv(agents: List[Agent]) -> str:
 
 CUSTOM_CSS = """
 <style>
-/* ---- Google Font: Inter ---- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ---- Google Fonts: Inter + DM Sans ---- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* ---- Entrance Animations ---- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.15); }
+    50%      { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); }
+}
 
 /* ---- Design System Variables ---- */
 :root {
@@ -410,11 +436,18 @@ CUSTOM_CSS = """
 /* ---- Global: force light-mode text on light background ---- */
 [data-testid="stAppViewContainer"] {
     background: var(--background);
+    background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(79, 70, 229, 0.04), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 50%, rgba(13, 148, 136, 0.02), transparent);
     color: #1e293b;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
 }
 [data-testid="stAppViewContainer"] * {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+/* Animate main content entrance */
+[data-testid="stAppViewContainer"] [data-testid="stMain"] > .block-container {
+    animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 h1, h2, h3, h4, h5, h6 { color: #0f172a !important; letter-spacing: -0.025em; }
 
@@ -543,47 +576,69 @@ strong, b {
 
 /* ---- Top filter bar ---- */
 .filter-bar {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    padding: 1.25rem 2rem;
-    border-radius: 14px;
+    background: linear-gradient(135deg, #0c1222 0%, #131d35 60%, #1a2240 100%);
+    padding: 1.35rem 2rem;
+    border-radius: 16px;
     margin-bottom: 1.5rem;
     display: flex;
     align-items: end;
     gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(15,23,42,0.2);
+}
+.filter-bar::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 60% 100% at 10% 0%, rgba(79,70,229,0.1), transparent 50%),
+        radial-gradient(circle at 90% 100%, rgba(13,148,136,0.06), transparent 40%);
+    pointer-events: none;
 }
 .filter-label {
     color: #94a3b8;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     margin-bottom: 0.25rem;
 }
 
 /* ---- Metric cards (top row) ---- */
 .metric-card {
     background: white;
-    border-radius: 14px;
+    border-radius: 18px;
     padding: 1.5rem 2rem;
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.02);
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    backdrop-filter: blur(8px);
 }
 .metric-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
     width: 4px; height: 100%;
-    border-radius: 14px 0 0 14px;
+    border-radius: 18px 0 0 18px;
+}
+.metric-card::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -50%;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(79,70,229,0.03) 0%, transparent 70%);
+    pointer-events: none;
 }
 .metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1), 0 4px 12px rgba(79,70,229,0.06);
+    border-color: rgba(79, 70, 229, 0.15);
 }
 .metric-icon {
     width: 52px; height: 52px;
@@ -591,60 +646,76 @@ strong, b {
     display: flex; align-items: center; justify-content: center;
     font-size: 1.5rem;
     flex-shrink: 0;
+    transition: transform 0.3s ease;
 }
-.metric-label { color: #64748b; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.3px; }
-.metric-value { font-size: 1.6rem; font-weight: 700; color: #0f172a; line-height: 1.2; }
+.metric-card:hover .metric-icon {
+    transform: scale(1.08);
+}
+.metric-label { color: #64748b; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.metric-value { font-size: 1.6rem; font-weight: 800; color: #0f172a; line-height: 1.2; letter-spacing: -0.02em; }
 
 .metric-card-highlight {
-    background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
-    border-radius: 14px;
+    background: linear-gradient(135deg, #0D9488 0%, #0f766e 50%, #14B8A6 100%);
+    background-size: 200% 200%;
+    border-radius: 18px;
     padding: 1.5rem 2rem;
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    box-shadow: 0 4px 20px rgba(13,148,136,0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 20px rgba(13,148,136,0.3), 0 8px 32px rgba(13,148,136,0.15);
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     border: none;
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+.metric-card-highlight::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 80%; height: 180%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    pointer-events: none;
 }
 .metric-card-highlight:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(13,148,136,0.4);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 12px 40px rgba(13,148,136,0.4), 0 4px 12px rgba(13,148,136,0.2);
 }
-.metric-card-highlight .metric-label { color: rgba(255,255,255,0.85); font-size: 0.78rem; font-weight: 500; }
-.metric-card-highlight .metric-value { color: white; }
+.metric-card-highlight .metric-label { color: rgba(255,255,255,0.9); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric-card-highlight .metric-value { color: white; font-weight: 800; letter-spacing: -0.02em; }
 
 /* ---- Agent row card ---- */
 .agent-row {
     background: white;
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    padding: 1.15rem 1.75rem;
     margin: 0.5rem 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    transition: all 0.25s ease;
-    border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .agent-row::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
     width: 4px; height: 100%;
-    background: #e2e8f0;
-    transition: background 0.25s ease;
+    background: linear-gradient(180deg, #e2e8f0, #cbd5e1);
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .agent-row:hover {
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    transform: translateY(-1px);
-    border-color: #e2e8f0;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.09), 0 2px 8px rgba(79,70,229,0.04);
+    transform: translateY(-2px);
+    border-color: rgba(79, 70, 229, 0.12);
 }
 .agent-row:hover::before {
-    background: #4F46E5;
+    background: linear-gradient(180deg, #4F46E5, #6366F1);
+    width: 5px;
 }
 .agent-avatar {
     width: 44px; height: 44px;
@@ -860,17 +931,20 @@ strong, b {
 /* ---- Team summary card (enhanced) ---- */
 .team-card {
     background: white;
-    border-radius: 14px;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     width: 100%;
+    border: 1px solid #f1f5f9;
+    animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .team-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(79,70,229,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    border-color: #E0E7FF;
 }
 .team-card-header {
     padding: 1.25rem 1.5rem;
@@ -1152,26 +1226,29 @@ strong, b {
 /* ---- Analytics panels ---- */
 .analytics-panel {
     background: white;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     overflow: hidden;
     margin-bottom: 1.5rem;
     border: 1px solid #e2e8f0;
-    transition: box-shadow 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .analytics-panel:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+    box-shadow: 0 8px 28px rgba(79,70,229,0.07), 0 4px 12px rgba(0,0,0,0.03);
+    border-color: #E0E7FF;
 }
 .analytics-panel-header {
-    padding: 1.1rem 1.5rem;
+    padding: 1.15rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     border-bottom: 1px solid #f1f5f9;
+    background: linear-gradient(180deg, #FAFBFF, white);
 }
 .analytics-panel-icon {
-    width: 38px; height: 38px;
-    border-radius: 10px;
+    width: 40px; height: 40px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.05rem;
     flex-shrink: 0;
@@ -2096,15 +2173,109 @@ button[data-testid="stBaseButton-primary"]:hover span,
 /* Rebate section header */
 .rebate-section-header { color: #475569 !important; }
 
+/* ============================================================
+   FLAG FORM CONTAINER  –  bordered card for rule flagging
+   ============================================================ */
+.flag-form-container {
+    border: 1.5px solid #e0e4ef;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem 1rem;
+    margin: 1rem 0 0.5rem;
+    background: linear-gradient(135deg, #fef9f3 0%, #fff5f5 50%, #fef2f2 100%);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.06), 0 0 0 1px rgba(239, 68, 68, 0.04);
+    position: relative;
+    animation: fadeInUp 0.3s ease-out;
+}
+.flag-form-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+    background: linear-gradient(90deg, #ef4444 0%, #f97316 50%, #eab308 100%);
+}
+.flag-form-header {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #b91c1c;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Sans', 'Inter', sans-serif;
+}
+.flag-form-icon {
+    font-size: 1.1rem;
+}
+/* 1) The header container that holds the collapse button (Streamlit 1.53+) */
+[data-testid="stSidebarHeader"] {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    position: absolute !important;
+}
+/* 2) The collapse button itself—various test-id names across versions */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCloseButton"],
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapsedControl"],
+button[data-testid="baseButton-headerNoPadding"],
+button[data-testid="baseButton-header"],
+[data-testid="stSidebar"] button[kind="header"],
+[data-testid="stSidebar"] button[kind="headerNoPadding"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+/* 3) Wildcard catch for any future collapse-related testid */
+[data-testid*="ollapse"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+/* 4) Hide the expand-sidebar control shown when sidebar is collapsed */
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+}
+/* 5) Force Material-Icons ligature text invisible as fallback */
+[data-testid="stSidebar"] .material-symbols-rounded,
+[data-testid="stSidebar"] .material-icons {
+    display: none !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    visibility: hidden !important;
+}
+
 /* ================================================================
-   DARK SIDEBAR THEME
+   DARK SIDEBAR THEME  –  glassmorphism
    ================================================================ */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%) !important;
-    border-right: 1px solid rgba(255,255,255,0.06) !important;
+    background: linear-gradient(180deg, #0c1222 0%, #131d35 40%, #172042 100%) !important;
+    border-right: 1px solid rgba(255,255,255,0.05) !important;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.12) !important;
+}
+[data-testid="stSidebar"]::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 120% 50% at 30% 0%, rgba(79,70,229,0.12), transparent 60%),
+        radial-gradient(circle at 80% 100%, rgba(13,148,136,0.06), transparent 50%);
+    pointer-events: none; z-index: 0;
 }
 [data-testid="stSidebar"] [data-testid="stSidebarContent"] {
     background: transparent !important;
+    position: relative; z-index: 1;
 }
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] span,
@@ -2116,42 +2287,56 @@ button[data-testid="stBaseButton-primary"]:hover span,
     color: #CBD5E1 !important;
 }
 [data-testid="stSidebar"] hr {
-    border-color: rgba(255,255,255,0.08) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    margin: 0.5rem 1rem !important;
 }
 /* Sidebar radio buttons → styled nav items */
 [data-testid="stSidebar"] [role="radiogroup"] {
-    gap: 0.25rem !important;
+    gap: 0.3rem !important;
+    padding: 0 0.25rem !important;
 }
 [data-testid="stSidebar"] [role="radiogroup"] label {
     background: transparent !important;
-    border-radius: 10px !important;
-    padding: 0.65rem 1rem !important;
-    margin: 0 0.5rem !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 12px !important;
+    padding: 0.7rem 1rem !important;
+    margin: 0 0.4rem !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     border: 1px solid transparent !important;
     cursor: pointer !important;
+    position: relative;
 }
 [data-testid="stSidebar"] [role="radiogroup"] label:hover {
     background: rgba(255,255,255,0.06) !important;
     border-color: rgba(255,255,255,0.08) !important;
+    transform: translateX(2px);
 }
 [data-testid="stSidebar"] [role="radiogroup"] label[data-checked="true"],
 [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
-    background: rgba(79, 70, 229, 0.15) !important;
-    border-color: rgba(79, 70, 229, 0.3) !important;
+    background: rgba(79, 70, 229, 0.18) !important;
+    border-color: rgba(79, 70, 229, 0.35) !important;
+    box-shadow: 0 2px 12px rgba(79,70,229,0.15), inset 0 0 0 1px rgba(165,180,252,0.1) !important;
+}
+/* Active indicator bar */
+[data-testid="stSidebar"] [role="radiogroup"] label[data-checked="true"]::before,
+[data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked)::before {
+    content: '';
+    position: absolute; left: -0.4rem; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 60%; border-radius: 2px;
+    background: linear-gradient(180deg, #818CF8, #4F46E5);
 }
 [data-testid="stSidebar"] [role="radiogroup"] label[data-checked="true"] p,
 [data-testid="stSidebar"] [role="radiogroup"] label[data-checked="true"] span,
 [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) p,
 [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) span {
-    color: #A5B4FC !important;
+    color: #C7D2FE !important;
     font-weight: 600 !important;
 }
 [data-testid="stSidebar"] [role="radiogroup"] label p,
 [data-testid="stSidebar"] [role="radiogroup"] label span {
     color: #94A3B8 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.88rem !important;
     font-weight: 500 !important;
+    letter-spacing: 0.01em;
 }
 /* Hide radio button circles */
 [data-testid="stSidebar"] [role="radiogroup"] input[type="radio"] {
@@ -2169,36 +2354,48 @@ button[data-testid="stBaseButton-secondary"] {
     font-weight: 600 !important;
     font-size: 0.85rem !important;
     padding: 0.5rem 1.25rem !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     border: 1px solid #E2E8F0 !important;
     background: white !important;
     color: #334155 !important;
+    position: relative;
+    overflow: hidden;
+}
+button[data-testid="stBaseButton-secondary"]::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(99,102,241,0.06));
+    opacity: 0;
+    transition: opacity 0.25s ease;
 }
 button[data-testid="stBaseButton-secondary"]:hover {
-    background: #F8FAFC !important;
-    border-color: #CBD5E1 !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+    background: #FAFAFE !important;
+    border-color: #C7D2FE !important;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.08) !important;
     transform: translateY(-1px);
 }
+button[data-testid="stBaseButton-secondary"]:hover::after { opacity: 1; }
 button[data-testid="stBaseButton-primary"] {
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     font-weight: 600 !important;
     font-size: 0.85rem !important;
-    padding: 0.5rem 1.25rem !important;
-    background: linear-gradient(135deg, #1e3a5f 0%, #1a365d 100%) !important;
+    padding: 0.55rem 1.4rem !important;
+    background: linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #4F46E5 100%) !important;
+    background-size: 200% 200% !important;
     border: none !important;
     color: white !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 2px 8px rgba(30, 58, 95, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3), 0 1px 3px rgba(79, 70, 229, 0.15) !important;
+    letter-spacing: 0.01em;
 }
 button[data-testid="stBaseButton-primary"] p,
 button[data-testid="stBaseButton-primary"] span {
     color: white !important;
 }
 button[data-testid="stBaseButton-primary"]:hover {
-    background: linear-gradient(135deg, #0f2942 0%, #1e3a5f 100%) !important;
-    box-shadow: 0 4px 14px rgba(30, 58, 95, 0.45) !important;
-    transform: translateY(-1px);
+    background-position: 100% 100% !important;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4), 0 2px 8px rgba(79, 70, 229, 0.2) !important;
+    transform: translateY(-2px);
 }
 button[data-testid="stBaseButton-primary"]:hover p,
 button[data-testid="stBaseButton-primary"]:hover span {
@@ -2229,29 +2426,31 @@ button[data-testid="stBaseButton-primary"]:hover span {
    ================================================================ */
 [data-baseweb="tab-list"] {
     background: white !important;
-    border-radius: 12px !important;
-    padding: 0.35rem !important;
+    border-radius: 14px !important;
+    padding: 0.4rem !important;
     border: 1px solid #E2E8F0 !important;
-    gap: 0.25rem !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    gap: 0.3rem !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04) !important;
 }
 button[data-baseweb="tab"] {
-    border-radius: 8px !important;
-    padding: 0.5rem 1.25rem !important;
+    border-radius: 10px !important;
+    padding: 0.55rem 1.35rem !important;
     font-weight: 500 !important;
     font-size: 0.85rem !important;
-    transition: all 0.15s ease !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     color: #64748B !important;
     border: none !important;
+    letter-spacing: 0.01em;
 }
 button[data-baseweb="tab"]:hover {
     background: #F1F5F9 !important;
     color: #334155 !important;
 }
 button[data-baseweb="tab"][aria-selected="true"] {
-    background: #4F46E5 !important;
+    background: linear-gradient(135deg, #4F46E5, #6366F1) !important;
     color: white !important;
-    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.2) !important;
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.25) !important;
+    font-weight: 600 !important;
 }
 button[data-baseweb="tab"][aria-selected="true"] p,
 button[data-baseweb="tab"][aria-selected="true"] span {
@@ -2298,20 +2497,83 @@ input:focus {
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
 /* ================================================================
-   PAGE TITLE STYLING
+   PAGE HEADER   –   consistent branded header for every page
    ================================================================ */
+.page-header-wrap {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 1.6rem 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.page-header-wrap::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4F46E5, #818CF8, #6366F1, #4F46E5);
+    background-size: 300% 100%;
+    animation: shimmer 4s ease infinite;
+}
+.page-header-wrap::after {
+    content: '';
+    position: absolute; top: -40%; right: -5%; width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(79,70,229,0.04), transparent 70%);
+    pointer-events: none;
+}
 .page-header-title {
     font-size: 1.85rem;
     font-weight: 800;
     color: #0F172A;
     letter-spacing: -0.03em;
     line-height: 1.2;
+    font-family: 'DM Sans', 'Inter', sans-serif;
 }
 .page-header-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: #64748B;
     font-weight: 400;
-    margin-top: 0.25rem;
+    margin-top: 0.3rem;
+    line-height: 1.4;
+}
+.page-header-badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: #EEF2FF; color: #4F46E5;
+    padding: 0.25rem 0.85rem; border-radius: 20px;
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.3px; margin-top: 0.5rem;
+}
+
+/* ================================================================
+   EXPANDER REFINEMENTS
+   ================================================================ */
+[data-testid="stExpander"] {
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03) !important;
+    overflow: hidden;
+    transition: all 0.25s ease !important;
+}
+[data-testid="stExpander"]:hover {
+    border-color: #CBD5E1 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+[data-testid="stExpander"] summary {
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    padding: 0.75rem 1rem !important;
+}
+
+/* ================================================================
+   DIVIDER REFINEMENTS
+   ================================================================ */
+[data-testid="stAppViewContainer"] hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, #E2E8F0, transparent) !important;
+    margin: 1rem 0 !important;
 }
 </style>
 """
@@ -3771,11 +4033,11 @@ MEMO_CSS = """
     flex-direction: column !important;
 }
 .memo-kpi-card {
-    background: white; border-radius: 16px;
+    background: white; border-radius: 18px;
     padding: 1.35rem 1.5rem; text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
     border: 1px solid #f1f5f9;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     height: 130px;
@@ -3783,38 +4045,48 @@ MEMO_CSS = """
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .memo-kpi-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #4F46E5, #818CF8);
+    background: linear-gradient(90deg, #4F46E5, #818CF8, #4F46E5);
+    background-size: 200% 100%;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
+}
+.memo-kpi-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% -20%, rgba(79,70,229,0.03), transparent 70%);
+    pointer-events: none;
 }
 .memo-kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(79,70,229,0.1), 0 4px 12px rgba(0,0,0,0.04);
+    border-color: #E0E7FF;
 }
-.memo-kpi-card:hover::before { opacity: 1; }
-.memo-kpi-value { font-size: 2rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
-.memo-kpi-label { font-size: 0.75rem; color: #64748b; font-weight: 500; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.memo-kpi-card:hover::before { opacity: 1; animation: shimmer 2s ease infinite; }
+.memo-kpi-value { font-size: 2rem; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; font-family: 'DM Sans', sans-serif; }
+.memo-kpi-label { font-size: 0.72rem; color: #64748b; font-weight: 600; margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.8px; }
 
 /* Table rows */
 .memo-table-row {
-    background: white; border-radius: 14px;
+    background: white; border-radius: 16px;
     padding: 1rem 1.5rem; margin: 0.5rem 0;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     border: 1px solid #f1f5f9;
     display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
     align-items: center; gap: 0.5rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .memo-table-row:hover {
-    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
-    transform: translateY(-1px);
-    border-color: #e2e8f0;
+    box-shadow: 0 8px 24px rgba(79,70,229,0.07), 0 2px 8px rgba(0,0,0,0.04);
+    transform: translateY(-2px);
+    border-color: #E0E7FF;
 }
 .memo-table-row > div {
     overflow: hidden; text-overflow: ellipsis; min-width: 0;
@@ -3822,17 +4094,19 @@ MEMO_CSS = """
 
 /* Section headers */
 .memo-section-header {
-    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-    color: white !important; padding: 0.7rem 1.15rem; border-radius: 10px;
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #1a2744 100%);
+    color: white !important; padding: 0.75rem 1.25rem; border-radius: 12px;
     font-weight: 600; margin-bottom: 0.5rem; font-size: 0.88rem;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.15);
 }
 
 /* Rule cards in memo view */
 .memo-rule-card {
     background: #f8fafc; border-left: 4px solid #10B981;
-    padding: 0.85rem 1.15rem; margin: 0.4rem 0; border-radius: 0 10px 10px 0;
-    transition: background 0.15s ease;
+    padding: 0.85rem 1.15rem; margin: 0.4rem 0; border-radius: 0 12px 12px 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 .memo-rule-card:hover { background: #f1f5f9; }
 .memo-rule-card-flagged {
@@ -3864,18 +4138,30 @@ MEMO_CSS = """
 
 /* ---- Rule-oriented cards (Extracted Rules page) ---- */
 .rule-card {
-    background: white; border-radius: 16px;
-    padding: 1.35rem 1.5rem; margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    background: white; border-radius: 18px;
+    padding: 1.4rem 1.5rem; margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
     border: 1px solid #e2e8f0;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rule-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, #818CF8, #4F46E5);
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
 }
 .rule-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-    border-color: #CBD5E1;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(79,70,229,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    border-color: #C7D2FE;
 }
+.rule-card:hover::after { opacity: 1; }
 .rule-card-flagged {
     background: #FFFBEB; border-left: 4px solid #F59E0B;
 }
@@ -3962,28 +4248,35 @@ MEMO_CSS = """
 
 /* ---- Project Dashboard ---- */
 .prj-card {
-    background: white; border-radius: 16px;
+    background: white; border-radius: 18px;
     padding: 1.5rem; margin-bottom: 1.2rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
     border: 1px solid #e2e8f0;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .prj-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
     width: 4px; height: 100%;
-    background: linear-gradient(180deg, #4F46E5, #818CF8);
+    background: linear-gradient(180deg, #6366F1, #4F46E5, #3730A3);
     border-radius: 16px 0 0 16px;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.25s ease;
+}
+.prj-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top right, rgba(79,70,229,0.02), transparent 60%);
+    pointer-events: none;
 }
 .prj-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-    border-color: #CBD5E1;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(79,70,229,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    border-color: #C7D2FE;
 }
 .prj-card:hover::before { opacity: 1; }
 .prj-card-header {
@@ -4014,26 +4307,60 @@ MEMO_CSS = """
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2px;
 }
 
-/* Project metrics grid */
+/* Project metrics grid — fixed 4-col for balanced rows */
 .prj-metrics {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 0.65rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem 0.75rem;
+    margin-top: 0.25rem;
 }
 .prj-metric {
-    background: #F8FAFC; border-radius: 10px;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid #F1F5F9;
-    transition: background 0.15s ease;
+    background: #FAFAFD; border-radius: 12px;
+    padding: 0.85rem 1rem;
+    border: 1px solid #F0F1F5;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
-.prj-metric:hover { background: #F1F5F9; }
+.prj-metric::before {
+    content: '';
+    position: absolute; top: 0.9rem; left: 0;
+    width: 3px; height: 1.6rem; border-radius: 0 3px 3px 0;
+    background: var(--accent, #94a3b8);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.prj-metric:hover {
+    background: #F4F3FF;
+    border-color: #E0E7FF;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(79,70,229,0.06);
+}
+.prj-metric:hover::before { opacity: 1; }
+/* Color accents per metric position */
+.prj-metric:nth-child(1) { --accent: #6366F1; }
+.prj-metric:nth-child(2) { --accent: #8B5CF6; }
+.prj-metric:nth-child(3) { --accent: #10B981; }
+.prj-metric:nth-child(4) { --accent: #0EA5E9; }
+.prj-metric:nth-child(5) { --accent: #F59E0B; }
+.prj-metric:nth-child(6) { --accent: #EC4899; }
+.prj-metric:nth-child(7) { --accent: #14B8A6; }
+.prj-metric:nth-child(8) { --accent: #6366F1; }
 .prj-metric-label {
-    font-size: 0.65rem; color: #94a3b8; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.5px;
+    font-size: 0.62rem; color: #94a3b8; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    display: flex; align-items: center; gap: 0.35rem;
+}
+.prj-metric-label::before {
+    content: '';
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--accent, #94a3b8);
+    flex-shrink: 0;
 }
 .prj-metric-value {
-    font-size: 1.05rem; font-weight: 700; color: #0f172a;
-    margin-top: 0.15rem;
+    font-size: 1.1rem; font-weight: 700; color: #0f172a;
+    margin-top: 0.2rem; letter-spacing: -0.01em;
+    font-family: 'DM Sans', 'Inter', sans-serif;
 }
 .prj-health-green { color: #16A34A; }
 .prj-health-yellow { color: #D97706; }
@@ -4859,8 +5186,9 @@ def render_memorandums_page():
     if sub_view == "upload":
         # Header
         st.markdown("""
-        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
-            <div style="font-size:1.85rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em;">📤 Add New Memorandum</div>
+        <div class="page-header-wrap">
+            <div class="page-header-title">📤 Add New Memorandum</div>
+            <div class="page-header-subtitle">Upload a memo PDF to extract commission rules automatically</div>
         </div>
         """, unsafe_allow_html=True)
         render_memo_upload()
@@ -4869,8 +5197,9 @@ def render_memorandums_page():
         memo_id = st.session_state.get("memo_review_id")
         if memo_id:
             st.markdown("""
-            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
-                <div style="font-size:1.85rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em;">🔍 Memorandum Review</div>
+            <div class="page-header-wrap">
+                <div class="page-header-title">🔍 Memorandum Review</div>
+                <div class="page-header-subtitle">Review extracted rules and approve or reject this memorandum</div>
             </div>
             """, unsafe_allow_html=True)
             render_memo_review(memo_id)
@@ -4884,11 +5213,12 @@ def render_memorandums_page():
         col_title, col_btn = st.columns([4, 1])
         with col_title:
             st.markdown("""
-            <div style="margin-bottom:0.5rem;">
-                <div style="font-size:1.85rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em;">📋 Memorandums</div>
-                <div style="color:#64748b; font-size:0.9rem;">
+            <div class="page-header-wrap">
+                <div class="page-header-title">📋 Memorandums</div>
+                <div class="page-header-subtitle">
                     Manage uploaded memorandums — review extracted rules, approve or reject
                 </div>
+                <div class="page-header-badge">📝 Document Pipeline</div>
             </div>
             """, unsafe_allow_html=True)
         with col_btn:
@@ -4908,13 +5238,16 @@ def render_dashboard():
 
     # ---- Header ----
     st.markdown("""
-    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
-        <div style="font-size:1.85rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em;">📊 Commission Management</div>
-        <div style="flex:1;"></div>
-        <div style="color:#94a3b8; font-size:0.85rem;">Avaland Property Group</div>
-    </div>
-    <div style="color:#64748b; font-size:0.9rem; margin-bottom:1.5rem;">
-        Overview of agent commissions, payment tracking &amp; performance analytics &mdash; Aetas Seputeh
+    <div class="page-header-wrap">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div>
+                <div class="page-header-title">📊 Commission Management</div>
+                <div class="page-header-subtitle">
+                    Overview of agent commissions, payment tracking &amp; performance analytics &mdash; Aetas Seputeh
+                </div>
+                <div class="page-header-badge">✨ Avaland Property Group</div>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -5280,9 +5613,10 @@ def render_projects_page():
     hc1, hc2 = st.columns([3, 1])
     with hc1:
         st.markdown("""
-        <div style="margin-bottom:0.25rem;">
-            <div style="font-size:1.85rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em;">📊 Projects</div>
-            <div style="color:#64748b; font-size:0.9rem;">Overview of sales programs, memos, and commission performance</div>
+        <div class="page-header-wrap">
+            <div class="page-header-title">📊 Projects</div>
+            <div class="page-header-subtitle">Overview of sales programs, memos, and commission performance</div>
+            <div class="page-header-badge">🏢 Property Portfolio</div>
         </div>
         """, unsafe_allow_html=True)
     with hc2:
@@ -5426,6 +5760,10 @@ def render_projects_page():
         status = p["status"]
         health = p["health"]
 
+        # Build efficiency display with color
+        eff_val = p['efficiency']
+        eff_color = '#16A34A' if eff_val >= 15 else ('#D97706' if eff_val >= 8 else '#DC2626')
+
         st.markdown(f"""
         <div class="prj-card">
             <div class="prj-card-header">
@@ -5469,7 +5807,7 @@ def render_projects_page():
                 </div>
                 <div class="prj-metric">
                     <div class="prj-metric-label">Efficiency</div>
-                    <div class="prj-metric-value">{p['efficiency']}</div>
+                    <div class="prj-metric-value" style="color:{eff_color}">{eff_val}</div>
                 </div>
             </div>
         </div>
@@ -5867,7 +6205,13 @@ def _render_rule_card(rule: dict, idx: int):
 
         # Flag form
         if st.session_state.get(f"show_flag_form_{rid}", False):
-            st.markdown("**Select reason for flagging:**")
+            st.markdown(
+                '<div class="flag-form-container">'
+                '<div class="flag-form-header">'
+                '<span class="flag-form-icon">🚩</span> Flag This Rule'
+                '</div>',
+                unsafe_allow_html=True,
+            )
             reason = st.selectbox("Reason", [
                 "Incorrect extraction",
                 "Missing condition",
@@ -5876,13 +6220,20 @@ def _render_rule_card(rule: dict, idx: int):
                 "Other",
             ], key=f"flag_reason_{rid}_{idx}")
             flag_note = st.text_input("Additional note (optional)", key=f"flag_note_{rid}_{idx}")
-            if st.button("Submit Flag", key=f"submit_flag_{rid}_{idx}", type="primary"):
-                flagged = st.session_state.get("flagged_rules", {})
-                flagged[rid] = {"reason": reason, "note": flag_note}
-                st.session_state["flagged_rules"] = flagged
-                st.session_state.pop(f"show_flag_form_{rid}", None)
-                st.success(f"Rule {rid} flagged: {reason}")
-                st.rerun()
+            fc1, fc2, _ = st.columns([1, 1, 3])
+            with fc1:
+                if st.button("Submit Flag", key=f"submit_flag_{rid}_{idx}", type="primary"):
+                    flagged = st.session_state.get("flagged_rules", {})
+                    flagged[rid] = {"reason": reason, "note": flag_note}
+                    st.session_state["flagged_rules"] = flagged
+                    st.session_state.pop(f"show_flag_form_{rid}", None)
+                    st.success(f"Rule {rid} flagged: {reason}")
+                    st.rerun()
+            with fc2:
+                if st.button("Cancel", key=f"cancel_flag_{rid}_{idx}"):
+                    st.session_state.pop(f"show_flag_form_{rid}", None)
+                    st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
 
         # Show validation results
         val_results = st.session_state.get(f"validation_{rid}")
@@ -5908,9 +6259,10 @@ def render_extracted_rules_page():
 
     # ---- Header ----
     st.markdown("""
-    <div style="margin-bottom:0.25rem;">
-        <div style="font-size:1.85rem; font-weight:800; color:#0f172a; letter-spacing:-0.03em;">📚 Extracted Rules</div>
-        <div style="color:#64748b; font-size:0.9rem;">Commission calculation rules extracted from approved memorandums</div>
+    <div class="page-header-wrap">
+        <div class="page-header-title">📚 Extracted Rules</div>
+        <div class="page-header-subtitle">Commission calculation rules extracted from approved memorandums</div>
+        <div class="page-header-badge">⚙️ Rule Engine</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -6058,21 +6410,31 @@ def main():
     # ── Sidebar Navigation ──
     with st.sidebar:
         st.markdown("""
-        <div style="text-align:center; padding:1.5rem 0 0.75rem 0;">
+        <div style="text-align:center; padding:1.8rem 0 1rem 0;">
             <div style="
                 display:inline-flex; align-items:center; justify-content:center;
-                width:42px; height:42px; border-radius:12px;
-                background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
-                margin-bottom:0.6rem;
-                box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+                width:52px; height:52px; border-radius:16px;
+                background: linear-gradient(135deg, #6366F1 0%, #4F46E5 50%, #4338CA 100%);
+                margin-bottom:0.75rem;
+                box-shadow: 0 6px 20px rgba(79,70,229,0.35), 0 0 0 4px rgba(99,102,241,0.1);
+                animation: pulseGlow 3s ease-in-out infinite;
             ">
-                <span style="color:white; font-size:1.1rem; font-weight:800;">A</span>
+                <span style="color:white; font-size:1.3rem; font-weight:800; font-family:'DM Sans',sans-serif;">A</span>
             </div>
-            <div style="font-size:1.2rem; font-weight:800; color:#F1F5F9; letter-spacing:0.08em;">AVALAND</div>
-            <div style="font-size:0.65rem; color:#64748B; letter-spacing:1.5px; margin-top:0.15rem;">PROPERTY GROUP</div>
+            <div style="font-size:1.25rem; font-weight:800; color:#F1F5F9; letter-spacing:0.12em;
+                         font-family:'DM Sans',sans-serif;">AVALAND</div>
+            <div style="font-size:0.6rem; color:#64748B; letter-spacing:2.5px; margin-top:0.2rem;
+                         font-weight:500;">PROPERTY GROUP</div>
         </div>
         """, unsafe_allow_html=True)
         st.markdown("---")
+
+        # Section label
+        st.markdown(
+            '<div style="font-size:0.6rem; color:#475569; letter-spacing:1.8px; '
+            'font-weight:600; padding:0 1.2rem; margin-bottom:0.3rem;">NAVIGATION</div>',
+            unsafe_allow_html=True,
+        )
 
         nav_options = [
             "📊  Projects",
@@ -6096,9 +6458,11 @@ def main():
 
         st.markdown("---")
         st.markdown(
-            '<div style="font-size:0.68rem;color:#475569;text-align:center;padding:0.5rem 0;'
-            'letter-spacing:0.3px;">'
-            'Avaland Commission Suite v1.0'
+            '<div style="text-align:center; padding:0.5rem 0;">'
+            '<div style="font-size:0.62rem;color:#475569;letter-spacing:0.3px;">'
+            'Avaland Commission Suite</div>'
+            '<div style="font-size:0.55rem;color:#334155;margin-top:2px;opacity:0.5;">'
+            'v1.0 &middot; 2025</div>'
             '</div>',
             unsafe_allow_html=True,
         )

@@ -70,6 +70,7 @@ This roadmap is sequenced based on two inputs:
 - [ ] Only `approved` memos are loaded by the rule engine for calculations
 - [ ] Re-uploaded memos create new versions linked to the original
 - [ ] Auditor can verify each rule against its source page with ✅/❌ per rule
+- [ ] If the rules are flag, users are allowed to edit the rules and the changes will be tracked and stored in a database
 - [ ] Two different users must sign off (uploader ≠ approver enforced)
 
 ---

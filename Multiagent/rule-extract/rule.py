@@ -8,17 +8,24 @@ such as buyer type, block, floor level, unit type, etc.
 
 import json
 import os
+import sys
 from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 from openai import AzureOpenAI
 
-# Azure OpenAI Configuration (same as ocr.py)
-endpoint = "https://tanjj-4934-resource.cognitiveservices.azure.com/"
-model_name = "gpt-5.2-chat"
-deployment = "gpt-5.2-chat"
+# Add Multiagent/ to path so we can import the shared config
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from config import (
+    AZURE_OPENAI_ENDPOINT as endpoint,
+    AZURE_OPENAI_API_KEY as subscription_key,
+    AZURE_OPENAI_DEPLOYMENT as deployment,
+    AZURE_OPENAI_API_VERSION as api_version,
+)
 
-subscription_key = "HIqssNjgEFrPz3CaLZzjLAtXosVNRrm5aiKCIRrNSXl9XxAt7zSaJQQJ99CAACHYHv6XJ3w3AAAAACOGpKdo"
-api_version = "2024-12-01-preview"
+model_name = deployment
 
 client = AzureOpenAI(
     api_version=api_version,

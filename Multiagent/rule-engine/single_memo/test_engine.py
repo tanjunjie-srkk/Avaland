@@ -9,10 +9,10 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from rule_engine import RuleEngine, create_engine
+from multi_memo.rule_engine import RuleEngine, create_engine
 from rule_loader import load_rules
 from rule_matcher import RuleMatcher
-from condition_parser import ConditionParser
+from multi_memo.condition_parser import ConditionParser
 
 
 def test_condition_parser():

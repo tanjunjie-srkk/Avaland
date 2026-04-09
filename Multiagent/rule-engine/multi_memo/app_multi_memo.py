@@ -238,7 +238,9 @@ def format_currency(amount: float) -> str:
 @st.cache_resource
 def load_multi_memo_engine():
     """Load the multi-memo engine with caching."""
-    artifacts_path = Path(__file__).parent.parent / "artifact"
+    # app is at: rule-engine/multi_memo/app_multi_memo.py
+    # artifacts at: Multiagent/artifact/  (3 levels up from multi_memo/)
+    artifacts_path = Path(__file__).parent.parent.parent / "artifact"
     engine = create_multi_memo_engine(str(artifacts_path))
     return engine
 

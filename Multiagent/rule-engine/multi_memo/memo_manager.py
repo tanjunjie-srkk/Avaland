@@ -264,7 +264,7 @@ class Memo:
         return min(score, 1.0)
 
 
-class xMemoManager:
+class MemoManager:
     """
     Manages multiple memos with indexing, filtering, and retrieval capabilities.
     """

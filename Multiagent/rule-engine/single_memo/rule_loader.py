@@ -30,7 +30,7 @@ class Rule:
         Find the first condition that matches the given context.
         Returns the condition dict with its parameters (percentage, amount, etc.)
         """
-        from condition_parser import ConditionParser
+        from multi_memo.condition_parser import ConditionParser
         parser = ConditionParser()
         
         for condition in self.conditions:

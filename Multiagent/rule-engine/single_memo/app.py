@@ -17,7 +17,7 @@ from typing import Dict, List, Any, Optional
 # Add current directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from rule_engine import RuleEngine, create_engine, PricingResult
+from multi_memo.rule_engine import RuleEngine, create_engine, PricingResult
 from rule_matcher import MatchedRule
 
 # Page configuration

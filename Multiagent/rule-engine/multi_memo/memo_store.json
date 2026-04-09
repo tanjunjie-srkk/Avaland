@@ -1,0 +1,98 @@
+[
+  {
+    "memo_id": "MEMO_001",
+    "memo_reference": "AVALUX-AD-MEMO-SM-2025-009",
+    "project_name": "Aetas Seputeh",
+    "effective_period": {
+      "start_date": "15 Jun 2025",
+      "end_date": "31 Dec 2025"
+    },
+    "upload_date": "2025-06-10",
+    "status": "approved",
+    "pdf_filename": "Memo1.pdf",
+    "image_folder": "Memo1",
+    "image_files": [
+      "Memo1_page-0001.jpg",
+      "Memo1_page-0002.jpg",
+      "Memo1_page-0003.jpg",
+      "Memo1_page-0004.jpg",
+      "Memo1_page-0005.jpg"
+    ],
+    "rules_file": "extracted-rules.json",
+    "extraction_confidence": 0.9,
+    "reviewer_notes": "",
+    "rule_count": {
+      "commission_rules": 4,
+      "rebate_rules": 4,
+      "referral_rules": 4,
+      "price_adjustment_rules": 2,
+      "package_rules": 2
+    }
+  },
+  {
+    "memo_id": "MEMO_002",
+    "memo_reference": "AVALUX-AD-MEMO-SM-2025-012",
+    "project_name": "Aetas Seputeh",
+    "effective_period": {
+      "start_date": "01 Jan 2026",
+      "end_date": "30 Jun 2026"
+    },
+    "upload_date": "2025-12-15",
+    "status": "pending",
+    "pdf_filename": "Memo2.pdf",
+    "image_folder": "Memo2",
+    "image_files": [],
+    "rules_file": null,
+    "extraction_confidence": null,
+    "reviewer_notes": "Awaiting rule extraction review",
+    "rule_count": null
+  },
+  {
+    "memo_id": "MEMO_003",
+    "memo_reference": "AVALUX-AD-MEMO-SM-2025-007",
+    "project_name": "Aetas Seputeh",
+    "effective_period": {
+      "start_date": "01 Mar 2025",
+      "end_date": "14 Jun 2025"
+    },
+    "upload_date": "2025-03-01",
+    "status": "rejected",
+    "pdf_filename": "Memo_old.pdf",
+    "image_folder": "Memo_old",
+    "image_files": [],
+    "rules_file": null,
+    "extraction_confidence": 0.45,
+    "reviewer_notes": "Extraction accuracy too low - multiple tables misread. Need manual re-entry.",
+    "rule_count": null
+  },
+  {
+    "memo_id": "MEMO_004",
+    "memo_reference": "AVALUXE-AD-MEMO-SM-2025-009",
+    "project_name": "Aetas Sepueth",
+    "effective_period": {
+      "start_date": "15 Jun 2025",
+      "end_date": "31 Dec 2025"
+    },
+    "upload_date": "2026-03-04",
+    "status": "approved",
+    "pdf_filename": "Memo1.pdf",
+    "image_folder": "Memo1",
+    "image_files": [
+      "Memo1_page-0001.jpg",
+      "Memo1_page-0002.jpg",
+      "Memo1_page-0003.jpg",
+      "Memo1_page-0004.jpg",
+      "Memo1_page-0005.jpg"
+    ],
+    "rules_file": "extracted-rules-memo_004.json",
+    "extraction_confidence": 0.98,
+    "reviewer_notes": "",
+    "rule_count": {
+      "commission_rules": 2,
+      "rebate_rules": 4,
+      "referral_rules": 4,
+      "price_adjustment_rules": 2,
+      "package_rules": 2
+    }
+  }
+]

@@ -1,0 +1,1264 @@
+{
+  "metadata": {
+    "project": "Aetas Seputeh",
+    "developer": "Avaland Berhad",
+    "active_memo": "AVALUX-AD-MEMO-SM-2025-010",
+    "superseded_memo": "AVALUX-AD-MEMO-SM-2025-009",
+    "effective_period": {
+      "start": "01 Jan 2026",
+      "end": "30 Jun 2026"
+    },
+    "description": "Demo data for Management Commission Dashboard. Sales data uses real rule IDs, memo references, and commission/rebate structures from the Aetas Seputeh pricing memos.",
+    "commission_schemes": [
+      "AVALUX-AD-MEMO-SM-2025-010 (Jan–Jun 2026)",
+      "AVALUX-AD-MEMO-SM-2025-009 (Jun–Dec 2025)"
+    ],
+    "periods": [
+      "January 2026",
+      "February 2026",
+      "March 2026",
+      "April 2026",
+      "May 2026",
+      "June 2026"
+    ]
+  },
+  "agents": [
+    {
+      "agent_id": "AG001",
+      "name": "Ahmad Razak",
+      "initials": "AR",
+      "team": "Alpha Team",
+      "avatar_color": "#1a73e8",
+      "is_team_leader": true,
+      "previously_paid_pct": 0.3,
+      "sales": [
+        {
+          "unit_id": "B-15-A1",
+          "block": "B",
+          "floor": 15,
+          "unit_type": "A1",
+          "buyer_name": "Tan Wei Ming",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 980000,
+          "spa_date": "15 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 53900.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 98000.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 117600.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-22-A2",
+          "block": "B",
+          "floor": 22,
+          "unit_type": "A2",
+          "buyer_name": "Lee Chong Wei",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1150000,
+          "spa_date": "28 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 4.5,
+              "amount": 51750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 80500.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 8.0,
+              "amount": 92000.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-18-A1",
+          "block": "A",
+          "floor": 18,
+          "unit_type": "A1",
+          "buyer_name": "Rajesh Kumar",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 850000,
+          "spa_date": "10 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 21250.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 85000.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-12-A1",
+          "block": "B",
+          "floor": 12,
+          "unit_type": "A1",
+          "buyer_name": "Ahmad bin Yusof",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 920000,
+          "spa_date": "05 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 50600.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 64400.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 85560.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 102672.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-25-A2",
+          "block": "B",
+          "floor": 25,
+          "unit_type": "A2",
+          "buyer_name": "Siti Nurhaliza",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 1280000,
+          "spa_date": "20 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 4.5,
+              "amount": 57600.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 89600.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 83328.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 8.0,
+              "amount": 95232.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-25-A1",
+          "block": "A",
+          "floor": 25,
+          "unit_type": "A1",
+          "buyer_name": "Ooi Yong Qin",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1700000,
+          "spa_date": "16 Jun 2025",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-009",
+              "rate": 2.0,
+              "amount": 30940.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-009",
+              "rate": 9.0,
+              "amount": 153000.0
+            }
+          ],
+          "packages": []
+        }
+      ],
+      "payment_history": [
+        {
+          "date": "2026-01-15",
+          "reference": "PAY-2026-0115-AR",
+          "pct": 0.15,
+          "status": "paid"
+        },
+        {
+          "date": "2026-02-15",
+          "reference": "PAY-2026-0215-AR",
+          "pct": 0.15,
+          "status": "paid"
+        }
+      ]
+    },
+    {
+      "agent_id": "AG002",
+      "name": "Nurul Hana",
+      "initials": "NH",
+      "team": "Alpha Team",
+      "avatar_color": "#0d9488",
+      "is_team_leader": false,
+      "previously_paid_pct": 0.0,
+      "sales": [
+        {
+          "unit_id": "A-25-A2",
+          "block": "A",
+          "floor": 25,
+          "unit_type": "A2",
+          "buyer_name": "Priya Sharma",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1050000,
+          "spa_date": "20 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 26250.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 73500.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-16-A1",
+          "block": "B",
+          "floor": 16,
+          "unit_type": "A1",
+          "buyer_name": "Siti Aminah",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 960000,
+          "spa_date": "08 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 52800.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 67200.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 89280.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 107136.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-31-A2",
+          "block": "B",
+          "floor": 31,
+          "unit_type": "A2",
+          "buyer_name": "David Thompson",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1380000,
+          "spa_date": "22 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 3.5,
+              "amount": 48300.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 96600.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 6.5,
+              "amount": 89700.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-20-A1",
+          "block": "A",
+          "floor": 20,
+          "unit_type": "A1",
+          "buyer_name": "Chen Wei Lin",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1200000,
+          "spa_date": "15 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 30000.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 120000.0
+            }
+          ]
+        }
+      ],
+      "payment_history": []
+    },
+    {
+      "agent_id": "AG003",
+      "name": "James Wong",
+      "initials": "JW",
+      "team": "Beta Team",
+      "avatar_color": "#7c3aed",
+      "is_team_leader": false,
+      "previously_paid_pct": 1.0,
+      "sales": [
+        {
+          "unit_id": "B-32-A1",
+          "block": "B",
+          "floor": 32,
+          "unit_type": "A1",
+          "buyer_name": "Lim Ah Kow",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1450000,
+          "spa_date": "12 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 3.5,
+              "amount": 50750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 145000.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 6.5,
+              "amount": 94250.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-35-A2",
+          "block": "B",
+          "floor": 35,
+          "unit_type": "A2",
+          "buyer_name": "Wong Mei Ling",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1520000,
+          "spa_date": "28 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 3.5,
+              "amount": 53200.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 106400.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 6.5,
+              "amount": 98800.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-33-A1",
+          "block": "B",
+          "floor": 33,
+          "unit_type": "A1",
+          "buyer_name": "Mohd Hafiz",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 1480000,
+          "spa_date": "10 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 3.5,
+              "amount": 51800.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 103600.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 137640.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 6.5,
+              "amount": 89466.0
+            }
+          ]
+        }
+      ],
+      "payment_history": [
+        {
+          "date": "2026-01-15",
+          "reference": "PAY-2026-0115-JW",
+          "pct": 0.35,
+          "status": "paid"
+        },
+        {
+          "date": "2026-02-15",
+          "reference": "PAY-2026-0215-JW",
+          "pct": 0.35,
+          "status": "paid"
+        },
+        {
+          "date": "2026-03-15",
+          "reference": "PAY-2026-0315-JW",
+          "pct": 0.3,
+          "status": "paid"
+        }
+      ]
+    },
+    {
+      "agent_id": "AG004",
+      "name": "Priya Nair",
+      "initials": "PN",
+      "team": "Beta Team",
+      "avatar_color": "#dc2626",
+      "is_team_leader": false,
+      "previously_paid_pct": 0.5,
+      "sales": [
+        {
+          "unit_id": "A-14-A2",
+          "block": "A",
+          "floor": 14,
+          "unit_type": "A2",
+          "buyer_name": "Rajesh Kumar",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 880000,
+          "spa_date": "18 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 22000.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 61600.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-18-A1",
+          "block": "B",
+          "floor": 18,
+          "unit_type": "A1",
+          "buyer_name": "Ong Bee Lian",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1020000,
+          "spa_date": "05 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 56100.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 102000.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 122400.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-24-A2",
+          "block": "B",
+          "floor": 24,
+          "unit_type": "A2",
+          "buyer_name": "Norazlina binti Hassan",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 1180000,
+          "spa_date": "01 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 4.5,
+              "amount": 53100.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 82600.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 76818.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 8.0,
+              "amount": 87792.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-30-A1",
+          "block": "A",
+          "floor": 30,
+          "unit_type": "A1",
+          "buyer_name": "Tan Mei Hua",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1350000,
+          "spa_date": "18 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 33750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 135000.0
+            }
+          ]
+        }
+      ],
+      "payment_history": [
+        {
+          "date": "2026-01-20",
+          "reference": "PAY-2026-0120-PN",
+          "pct": 0.25,
+          "status": "paid"
+        },
+        {
+          "date": "2026-02-20",
+          "reference": "PAY-2026-0220-PN",
+          "pct": 0.25,
+          "status": "paid"
+        }
+      ]
+    },
+    {
+      "agent_id": "AG005",
+      "name": "Lim Boon Keat",
+      "initials": "LB",
+      "team": "Gamma Team",
+      "avatar_color": "#ea580c",
+      "is_team_leader": true,
+      "previously_paid_pct": 0.5,
+      "sales": [
+        {
+          "unit_id": "B-14-B1",
+          "block": "B",
+          "floor": 14,
+          "unit_type": "B1",
+          "buyer_name": "Yamamoto Kenji",
+          "buyer_type": "foreign",
+          "buyer_is_bumi": false,
+          "sale_price": 1250000,
+          "spa_date": "10 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_004",
+              "label": "Foreign Buyer Commission (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 6.5,
+              "amount": 68250.0
+            }
+          ],
+          "rebate_breakdown": [],
+          "packages": [
+            "PKG_001 – Partially Furnished Package 2026 (RM220,000)"
+          ]
+        },
+        {
+          "unit_id": "B-20-A2",
+          "block": "B",
+          "floor": 20,
+          "unit_type": "A2",
+          "buyer_name": "Tan Siew Bee",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1100000,
+          "spa_date": "25 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 4.5,
+              "amount": 49500.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 77000.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 8.0,
+              "amount": 88000.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-17-A1",
+          "block": "B",
+          "floor": 17,
+          "unit_type": "A1",
+          "buyer_name": "Chen Xiaoming",
+          "buyer_type": "foreign",
+          "buyer_is_bumi": false,
+          "sale_price": 1350000,
+          "spa_date": "15 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_004",
+              "label": "Foreign Buyer Commission (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 6.5,
+              "amount": 74750.0
+            }
+          ],
+          "rebate_breakdown": [],
+          "packages": [
+            "PKG_001 – Partially Furnished Package 2026 (RM220,000)"
+          ]
+        },
+        {
+          "unit_id": "A-22-A2",
+          "block": "A",
+          "floor": 22,
+          "unit_type": "A2",
+          "buyer_name": "Lee Mei Fong",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 950000,
+          "spa_date": "28 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 23750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 66500.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-11-A1",
+          "block": "B",
+          "floor": 11,
+          "unit_type": "A1",
+          "buyer_name": "Lim Chee Keong",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 890000,
+          "spa_date": "15 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 48950.0
+            },
+            {
+              "rule_id": "COM_005",
+              "label": "CNY Bonus Commission",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 1.0,
+              "amount": 8900.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 89000.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 106800.0
+            },
+            {
+              "rule_id": "REB_005",
+              "label": "New Year Special Rebate",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.0,
+              "amount": 17800.0
+            }
+          ]
+        }
+      ],
+      "payment_history": [
+        {
+          "date": "2026-01-25",
+          "reference": "PAY-2026-0125-LB",
+          "pct": 0.25,
+          "status": "paid"
+        },
+        {
+          "date": "2026-02-25",
+          "reference": "PAY-2026-0225-LB",
+          "pct": 0.25,
+          "status": "paid"
+        }
+      ]
+    },
+    {
+      "agent_id": "AG006",
+      "name": "Farah Aisyah",
+      "initials": "FA",
+      "team": "Gamma Team",
+      "avatar_color": "#0284c7",
+      "is_team_leader": false,
+      "previously_paid_pct": 0.0,
+      "sales": [
+        {
+          "unit_id": "B-13-A1",
+          "block": "B",
+          "floor": 13,
+          "unit_type": "A1",
+          "buyer_name": "Nuraisyah binti Osman",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 940000,
+          "spa_date": "22 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 51700.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 65800.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 87420.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 104904.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-16-A2",
+          "block": "A",
+          "floor": 16,
+          "unit_type": "A2",
+          "buyer_name": "Azman bin Ismail",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 820000,
+          "spa_date": "12 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 20500.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 57400.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 53382.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-26-A1",
+          "block": "B",
+          "floor": 26,
+          "unit_type": "A1",
+          "buyer_name": "Fatimah binti Ali",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 1200000,
+          "spa_date": "05 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 4.5,
+              "amount": 54000.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 84000.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 111600.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 8.0,
+              "amount": 89280.0
+            }
+          ]
+        }
+      ],
+      "payment_history": []
+    },
+    {
+      "agent_id": "AG007",
+      "name": "David Chen",
+      "initials": "DC",
+      "team": "Alpha Team",
+      "avatar_color": "#4f46e5",
+      "is_team_leader": false,
+      "previously_paid_pct": 1.0,
+      "sales": [
+        {
+          "unit_id": "A-12-A1",
+          "block": "A",
+          "floor": 12,
+          "unit_type": "A1",
+          "buyer_name": "Goh Swee Lan",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 830000,
+          "spa_date": "05 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 20750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 83000.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-28-A2",
+          "block": "A",
+          "floor": 28,
+          "unit_type": "A2",
+          "buyer_name": "Koh Beng Soon",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1100000,
+          "spa_date": "20 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 27500.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 77000.0
+            }
+          ]
+        }
+      ],
+      "payment_history": [
+        {
+          "date": "2026-01-10",
+          "reference": "PAY-2026-0110-DC",
+          "pct": 0.5,
+          "status": "paid"
+        },
+        {
+          "date": "2026-02-10",
+          "reference": "PAY-2026-0210-DC",
+          "pct": 0.5,
+          "status": "paid"
+        }
+      ]
+    },
+    {
+      "agent_id": "AG008",
+      "name": "Salmah Yusof",
+      "initials": "SY",
+      "team": "Beta Team",
+      "avatar_color": "#059669",
+      "is_team_leader": false,
+      "previously_paid_pct": 0.5,
+      "sales": [
+        {
+          "unit_id": "B-19-A2",
+          "block": "B",
+          "floor": 19,
+          "unit_type": "A2",
+          "buyer_name": "Ng Kok Heng",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1050000,
+          "spa_date": "18 Jan 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 5.5,
+              "amount": 57750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 73500.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 12.0,
+              "amount": 126000.0
+            }
+          ]
+        },
+        {
+          "unit_id": "B-23-A1",
+          "block": "B",
+          "floor": 23,
+          "unit_type": "A1",
+          "buyer_name": "Chong Wai Kuan",
+          "buyer_type": "local",
+          "buyer_is_bumi": false,
+          "sale_price": 1280000,
+          "spa_date": "10 Feb 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_002",
+              "label": "Local Buyer Commission – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 4.5,
+              "amount": 57600.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 128000.0
+            },
+            {
+              "rule_id": "REB_003",
+              "label": "Special Rebate – Block B by Floor Tier (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 8.0,
+              "amount": 102400.0
+            }
+          ]
+        },
+        {
+          "unit_id": "A-15-A1",
+          "block": "A",
+          "floor": 15,
+          "unit_type": "A1",
+          "buyer_name": "Hasnah binti Yusof",
+          "buyer_type": "local",
+          "buyer_is_bumi": true,
+          "sale_price": 870000,
+          "spa_date": "02 Mar 2026",
+          "commission_breakdown": [
+            {
+              "rule_id": "COM_001",
+              "label": "Local Buyer Commission – Block A (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 2.5,
+              "amount": 21750.0
+            }
+          ],
+          "rebate_breakdown": [
+            {
+              "rule_id": "REB_001",
+              "label": "Bumi Rebate (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 7.0,
+              "amount": 60900.0
+            },
+            {
+              "rule_id": "REB_002",
+              "label": "Standard Rebate by Unit Type (Updated)",
+              "memo_reference": "AVALUX-AD-MEMO-SM-2025-010",
+              "rate": 10.0,
+              "amount": 80910.0
+            }
+          ]
+        }
+      ],
+      "payment_history": [
+        {
+          "date": "2026-01-18",
+          "reference": "PAY-2026-0118-SY",
+          "pct": 0.3,
+          "status": "paid"
+        },
+        {
+          "date": "2026-02-18",
+          "reference": "PAY-2026-0218-SY",
+          "pct": 0.2,
+          "status": "paid"
+        }
+      ]
+    }
+  ]
+}
